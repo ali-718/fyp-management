@@ -1,9 +1,10 @@
 import { View } from 'react-native'
 import React from 'react'
 import { Heading, Stack, Text } from 'native-base'
-import { primaryColor } from '../Utilities/Colors'
+import { primaryColor, primaryGreenColor, primaryRedColor } from '../Utilities/Colors'
+import { Button } from './Button'
 
-export const ProjectCard = ({ heading, supervisor, students = [], description }) => {
+export const ProjectCard = ({ heading, supervisor, students = [], description, onUpdate, onDelete }) => {
     return (
         <View style={{ borderWidth: 1, borderRadius: 8, padding: 12, borderColor: 'gainsboro' }}>
             <Stack space={2}>
@@ -21,6 +22,19 @@ export const ProjectCard = ({ heading, supervisor, students = [], description })
                 <Text fontWeight="400">
                     {description}
                 </Text>
+
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10}}>
+                <Button
+        text={'UPDATE'} bgColor={primaryGreenColor} textColor={'#fff'}
+        buttonStyles={{ width: '45%' }}
+        onPress={onUpdate}
+        />
+                <Button
+        text={'DELETE'} bgColor={primaryRedColor} textColor={'#fff'}
+        buttonStyles={{ width: '45%' }}
+        onPress={onDelete}
+        />
+                </View>
 
             </Stack>
         </View>

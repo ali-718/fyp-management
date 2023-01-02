@@ -1,56 +1,111 @@
-import { FlatList, View } from 'react-native'
-import React, { useCallback } from 'react'
-import { VStack, Box, Divider, NativeBaseProvider, Heading, Text, Stack } from 'native-base';
-import HomeContainer from '../Containers/HomeContainer';
-import { ProjectCard } from '../Components/ProjectCard';
+import { Alert, FlatList, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  VStack,
+  Box,
+  Divider,
+  NativeBaseProvider,
+  Heading,
+  Text,
+  Stack,
+} from "native-base";
+import HomeContainer from "../Containers/HomeContainer";
+import { ProjectCard } from "../Components/ProjectCard";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Button } from "../Components/Button";
+import { primaryColor } from "../Utilities/Colors";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
-const data = [
-    {
-        name: 'FYP Management System',
-        supervisor: 'Ameen Khowaja',
-        students: ['Ali Murtaza', 'Fazla Usman', 'Syed Abdul Moiz'],
-        description: 'Small FYP management app that will let Supervisors track there students FYP progress.'
-    },
-    {
-        name: 'Chat GPT',
-        supervisor: 'Qurban Lakhan',
-        students: ['Ali Raza', 'Usama Mirza', 'Jahanzeb Ali'],
-        description: 'Search engine powered by openAI that will provide accurate data than google, bing, edge etc.'
-    },
-    {
-        name: 'Healthcare Management System',
-        supervisor: 'Qurban Lakhan',
-        students: ['Aisha Baig', 'Asad Khan', 'Mansoor Ahmed'],
-        description: 'Search engine powered by openAI that will provide accurate data than google, bing, edge etc.'
-    }
-]
+const renderItem = ({ item }, onUpdate, onDelete) => (
+  <View style={{ marginTop: 10 }}>
+    <ProjectCard
+      heading={item?.name}
+      supervisor={item?.supervisor}
+      students={item?.students}
+      description={item?.description}
+      onUpdate={() => onUpdate(item)}
+      onDelete={() => onDelete(item?.id)}
+    />
+  </View>
+);
 
-const renderItem = ({ item }) => (
-    <View style={{ marginTop: 10 }}>
-        <ProjectCard
-            heading={item?.name}
-            supervisor={item?.supervisor}
-            students={item?.students}
-            description={item?.description}
-        />
-    </View>
+const _emptyComponent = () => (
+  <View style={{width: '100%', flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 50}}>
+    <Text>Sorry there are no projects!</Text>
+  </View>
 )
 
 const ProjectsPage = () => {
-    return (
-        <HomeContainer heading={'Projects'}>
-            <View style={{ flex: 1, width: '100%', marginTop: 20 }}>
-                <View style={{ width: '100%', flex: 1 }}>
-                    <FlatList
-                        key={(item, i) => `${i}`}
-                        data={data}
-                        renderItem={renderItem}
-                        style={{ flex: 1, width: '100%', }}
-                    />
-                </View>
-            </View>
-        </HomeContainer>
-    )
-}
+  const navigation = useNavigation();
+  const [data, setData] = useState([]);
 
-export default ProjectsPage
+  useFocusEffect(() => {
+    const storedData = AsyncStorage.getItem("projects");
+    storedData.then((res) => {
+      if (res !== null) {
+        setData(JSON.parse(res));
+      }
+    });
+  });
+
+  const onUpdate = (data) => {
+    navigation.navigate("addProject", { data });
+  };
+
+  const onDelete = (id) => {
+    Alert.alert("Warning!", "are you sure you want to delete ?", [
+      {
+        text: "Yes",
+        onPress: () => deleteProject(id),
+      },
+      {
+        text: "No",
+        onPress: () => {},
+      },
+    ]);
+  };
+
+  const deleteProject = async (id) => {
+    const storedData = await AsyncStorage.getItem("projects");
+    let data = JSON.parse(storedData);
+    data = data.filter((item) => item.id !== id);
+    AsyncStorage.setItem("projects", JSON.stringify(data))
+      .then(() => {
+        setData(data);
+      })
+  };
+
+  return (
+    <HomeContainer heading={"Projects"}>
+      <View style={{ flex: 1, width: "100%", marginTop: 20 }}>
+        <View style={{ width: "100%", flex: 1 }}>
+          <FlatList
+            key={(item, i) => `${i}`}
+            data={data}
+            renderItem={(item) => renderItem(item, onUpdate, onDelete)}
+            style={{ flex: 1, width: "100%" }}
+            contentContainerStyle={{ paddingBottom: 10 }}
+            ListEmptyComponent={_emptyComponent}
+          />
+          <View
+            style={{
+              width: "100%",
+              padding: 10,
+              borderTopWidth: 1,
+              borderTopColor: "gainsboro",
+            }}
+          >
+            <Button
+              text={"ADD PROJECT"}
+              bgColor={primaryColor}
+              textColor={"#fff"}
+              onPress={() => navigation.navigate("addProject")}
+            />
+          </View>
+        </View>
+      </View>
+    </HomeContainer>
+  );
+};
+
+export default ProjectsPage;
