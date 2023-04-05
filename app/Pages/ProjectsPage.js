@@ -16,7 +16,7 @@ import { Button } from "../Components/Button";
 import { primaryColor } from "../Utilities/Colors";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
-const renderItem = ({ item }, onUpdate, onDelete) => (
+const renderItem = ({ item }, onUpdate, onDelete, onPress) => (
   <View style={{ marginTop: 10 }}>
     <ProjectCard
       heading={item?.name}
@@ -25,6 +25,7 @@ const renderItem = ({ item }, onUpdate, onDelete) => (
       description={item?.description}
       onUpdate={() => onUpdate(item)}
       onDelete={() => onDelete(item?.id)}
+      onPress={() => onPress(item)}
     />
   </View>
 );
@@ -75,14 +76,18 @@ const ProjectsPage = () => {
       })
   };
 
+  const onPressProject = (item) => {
+    navigation.navigate('projectDetail', item)
+  }
+
   return (
-    <HomeContainer heading={"Projects"}>
+    <HomeContainer heading={"Groups"}>
       <View style={{ flex: 1, width: "100%", marginTop: 20 }}>
         <View style={{ width: "100%", flex: 1 }}>
           <FlatList
             key={(item, i) => `${i}`}
             data={data}
-            renderItem={(item) => renderItem(item, onUpdate, onDelete)}
+            renderItem={(item) => renderItem(item, onUpdate, onDelete, onPressProject)}
             style={{ flex: 1, width: "100%" }}
             contentContainerStyle={{ paddingBottom: 10 }}
             ListEmptyComponent={_emptyComponent}

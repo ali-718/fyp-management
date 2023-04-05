@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginPage from './Pages/LoginPage';
 import ProjectsPage from './Pages/ProjectsPage';
 import { AddProjectsPage } from './Pages/AddProjectsPage';
+import { PorjectDetailPage } from './Pages/PorjectDetailPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +18,7 @@ export const Routes = () => {
         <Stack.Screen name="Login" component={LoginPage} />
         <Stack.Screen name="Projects" component={ProjectsPage} />
         <Stack.Screen name="addProject" component={AddProjectsPage} />
+        <Stack.Screen name="projectDetail" component={PorjectDetailPage} />
       </Stack.Navigator>
     </NavigationContainer>
   )
