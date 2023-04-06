@@ -2,11 +2,12 @@ import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { primaryColor } from "../Utilities/Colors";
 
-export const Button = ({ text, bgColor, textColor, onPress, buttonStyles = {} }) => {
+export const Button = ({ text, bgColor, textColor, onPress, buttonStyles = {}, rounded, type = 'default' }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.button, { backgroundColor: bgColor || primaryColor }, buttonStyles]}
+      style={[type === 'default' ? styles.button : {alignItems: "center",
+      justifyContent: "center"}, type === 'default' && { backgroundColor: bgColor || primaryColor }, buttonStyles, rounded && {borderRadius: 4}]}
     >
       <Text style={[styles.buttonText, { color: textColor || "#fff" }]}>
         {text}
@@ -24,5 +25,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
+    fontWeight: '600'
   },
 });
