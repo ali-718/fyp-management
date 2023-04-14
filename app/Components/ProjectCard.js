@@ -17,7 +17,7 @@ export const ProjectCard = ({ onPress, heading, supervisor, students = [], descr
                     {supervisor}
                 </Text>
                 <Text fontWeight="700">
-                    {students?.join(', ')}
+                    {students.map(item => item.name)?.join(', ')}
                 </Text>
                 <Text fontWeight="400">
                     {description}

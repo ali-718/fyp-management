@@ -30,7 +30,7 @@ import moment from "moment";
 export const PorjectDetailPage = () => {
   const {
     name = "",
-    members = [
+    students = [
       {
         image:
           "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
@@ -88,7 +88,7 @@ export const PorjectDetailPage = () => {
         <Heading mt="5" size="md">
           Members
         </Heading>
-        {members.map((item, i) => (
+        {students.map((item, i) => (
           <Box key={i} pl={["0", "4"]} pr={["0", "5"]} py="2">
             <HStack
               space={[2, 3]}
@@ -185,22 +185,26 @@ export const PorjectDetailPage = () => {
             w="100%"
           />
 
-          <View style={{ marginTop: 10 }}>
-            <Button
-              rounded
-              text={"SUBMIT"}
-              bgColor={primaryGreenColor}
-              textColor={"#fff"}
-              onPress={closeModal}
-            />
+          <View style={{ marginTop: 10, flexDirection: 'row' }}>
+            <View style={{width: '50%'}}>
             <Button
               type="simple"
               rounded
-              buttonStyles={{ marginVertical: 15 }}
+              text={"SUBMIT"}
+              textColor={primaryGreenColor}
+              buttonStyles={{ marginVertical: 10 }}
+              onPress={closeModal}
+            />
+            </View>
+            <View style={{width: '50%'}}>
+            <Button
+              type="simple"
+              buttonStyles={{ marginVertical: 10 }}
               text={"CANCEL"}
               textColor={primaryRedColor}
               onPress={closeModal}
             />
+          </View>
           </View>
         </View>
       </Modal>

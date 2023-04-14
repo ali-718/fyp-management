@@ -10,21 +10,63 @@ const data = [
       id: 1,
       name: 'FYP Management System',
       supervisor: 'Ameen Khowaja',
-      students: ['Ali Murtaza', 'Fazla Usman', 'Syed Abdul Moiz'],
+      students: [
+       {
+        image:
+        "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
+      name: "Ali Murtaza",
+       }, {
+        image:
+        "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
+      name: "Fazla Usman",
+       }, {
+        image:
+        "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
+      name: "Syed Abdul Moiz",
+       }
+      ],
       description: 'Small FYP management app that will let Supervisors track there students FYP progress.'
   },
   {
     id: 2,
       name: 'Chat GPT',
-      supervisor: 'Qurban Lakhan',
-      students: ['Ali Raza', 'Usama Mirza', 'Jahanzeb Ali'],
+      supervisor: 'Ameen Khowaja',
+      students: [
+        {
+         image:
+         "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
+       name: "Ali Murtaza",
+        }, {
+         image:
+         "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
+       name: "Fazla Usman",
+        }, {
+         image:
+         "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
+       name: "Syed Abdul Moiz",
+        }
+       ],
       description: 'Search engine powered by openAI that will provide accurate data than google, bing, edge etc.'
   },
   {
     id: 3,
       name: 'Healthcare Management System',
-      supervisor: 'Qurban Lakhan',
-      students: ['Aisha Baig', 'Asad Khan', 'Mansoor Ahmed'],
+      supervisor: 'Ameen Khowaja',
+      students: [
+        {
+         image:
+         "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
+       name: "Ali Murtaza",
+        }, {
+         image:
+         "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
+       name: "Fazla Usman",
+        }, {
+         image:
+         "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
+       name: "Syed Abdul Moiz",
+        }
+       ],
       description: 'Search engine powered by openAI that will provide accurate data than google, bing, edge etc.'
   }
 ]
@@ -33,10 +75,10 @@ export default function App() {
 
   useEffect(() => {
    (async () => {
-    const fetched = await AsyncStorage.getItem('projects')
-    if (fetched === null) {
+    // const fetched = await AsyncStorage.getItem('projects')
+    // if (fetched === null) {
       AsyncStorage.setItem('projects', JSON.stringify(data))
-    }
+    // }
    })()
   }, [])
 
