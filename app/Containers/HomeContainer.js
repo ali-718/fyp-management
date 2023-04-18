@@ -52,7 +52,7 @@ const HomeContainer = (props) => {
           </View>
           {props.children}
         </View>
-        <Tabs />
+        <Tabs activeTab={props.activeTab} />
       </SafeAreaView>
     </NativeBaseProvider>
   );

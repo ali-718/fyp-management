@@ -2,24 +2,24 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { primaryColor } from './Utilities/Colors';
+import { useNavigation } from '@react-navigation/native';
 
-export const Tabs = () => {
-  const [activeTab, setActiveTab] = useState('home');
-
+export const Tabs = ({activeTab}) => {
+  const navigate = useNavigation()
   const handleTabPress = (tab) => {
-    setActiveTab(tab);
+    navigate.navigate(tab)
   };
 
   return (
     <View style={styles.bottomNavigation}>
       <TouchableOpacity
         style={styles.tab}
-        onPress={() => handleTabPress('home')}
+        onPress={() => handleTabPress('Projects')}
       >
         <MaterialIcons
           name="home"
           size={24}
-          color={activeTab === 'home' ? primaryColor : '#555'}
+          color={activeTab === 'Projects' ? primaryColor : '#555'}
         />
       </TouchableOpacity>
 

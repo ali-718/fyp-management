@@ -81,7 +81,7 @@ const ProjectsPage = () => {
   };
 
   return (
-    <HomeContainer heading={"Groups"}>
+    <HomeContainer activeTab='Projects' heading={"Groups"}>
       <View style={{ flex: 1, width: "100%", marginTop: 20 }}>
         <View style={{ width: "100%", flex: 1 }}>
           <FlatList
