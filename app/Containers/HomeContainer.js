@@ -3,6 +3,7 @@ import React from "react";
 import { Heading, Icon, NativeBaseProvider, ArrowBackIcon } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import safeareaView from "../Utilities/safeareaView";
+import { Tabs } from "../Tabs";
 
 const HomeContainer = (props) => {
   const navigation = useNavigation();
@@ -51,6 +52,7 @@ const HomeContainer = (props) => {
           </View>
           {props.children}
         </View>
+        <Tabs />
       </SafeAreaView>
     </NativeBaseProvider>
   );

@@ -1,20 +1,13 @@
 import { Alert, FlatList, View } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  VStack,
-  Box,
-  Divider,
-  NativeBaseProvider,
-  Heading,
-  Text,
-  Stack,
-} from "native-base";
+import { Text } from "native-base";
 import HomeContainer from "../Containers/HomeContainer";
 import { ProjectCard } from "../Components/ProjectCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button } from "../Components/Button";
 import { primaryColor } from "../Utilities/Colors";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { FAB } from "react-native-paper";
 
 const renderItem = ({ item }, onUpdate, onDelete, onPress) => (
   <View style={{ marginTop: 10 }}>
@@ -31,10 +24,18 @@ const renderItem = ({ item }, onUpdate, onDelete, onPress) => (
 );
 
 const _emptyComponent = () => (
-  <View style={{width: '100%', flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 50}}>
+  <View
+    style={{
+      width: "100%",
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingTop: 50,
+    }}
+  >
     <Text>Sorry there are no projects!</Text>
   </View>
-)
+);
 
 const ProjectsPage = () => {
   const navigation = useNavigation();
@@ -70,15 +71,14 @@ const ProjectsPage = () => {
     const storedData = await AsyncStorage.getItem("projects");
     let data = JSON.parse(storedData);
     data = data.filter((item) => item.id !== id);
-    AsyncStorage.setItem("projects", JSON.stringify(data))
-      .then(() => {
-        setData(data);
-      })
+    AsyncStorage.setItem("projects", JSON.stringify(data)).then(() => {
+      setData(data);
+    });
   };
 
   const onPressProject = (item) => {
-    navigation.navigate('projectDetail', item)
-  }
+    navigation.navigate("projectDetail", item);
+  };
 
   return (
     <HomeContainer heading={"Groups"}>
@@ -87,26 +87,25 @@ const ProjectsPage = () => {
           <FlatList
             key={(item, i) => `${i}`}
             data={data}
-            renderItem={(item) => renderItem(item, onUpdate, onDelete, onPressProject)}
+            renderItem={(item) =>
+              renderItem(item, onUpdate, onDelete, onPressProject)
+            }
             style={{ flex: 1, width: "100%" }}
             contentContainerStyle={{ paddingBottom: 10 }}
             ListEmptyComponent={_emptyComponent}
           />
-          <View
+          <FAB
+            icon="plus"
             style={{
-              width: "100%",
-              padding: 10,
-              borderTopWidth: 1,
-              borderTopColor: "gainsboro",
+              position: "absolute",
+              margin: 16,
+              right: 0,
+              bottom: 0,
+              backgroundColor: primaryColor,
             }}
-          >
-            <Button
-              text={"ADD PROJECT"}
-              bgColor={primaryColor}
-              textColor={"#fff"}
-              onPress={() => navigation.navigate("addProject")}
-            />
-          </View>
+            color="white"
+            onPress={() => navigation.navigate("addProject")}
+          />
         </View>
       </View>
     </HomeContainer>

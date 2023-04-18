@@ -25,7 +25,9 @@ import { ListItem } from "../Components/ListItem";
 import { Button } from "../Components/Button";
 import { Modal } from "react-native-paper";
 import { Calendar } from "react-native-calendars";
+import Toast from 'react-native-toast-message';
 import moment from "moment";
+import { ToastSuccess } from "../Utilities/Toast";
 
 export const PorjectDetailPage = () => {
   const {
@@ -52,6 +54,7 @@ export const PorjectDetailPage = () => {
   } = useRoute().params;
   const [isModal, setIsModal] = useState(false);
   const [meetingModal, setMeetingModal] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState('');
   const openModal = () => setIsModal(true);
   const closeModal = () => setIsModal(false);
 
@@ -225,8 +228,14 @@ export const PorjectDetailPage = () => {
           }}
         >
           <Calendar
+            displayLoadingIndicator={false}
+            markedDates={{
+              [scheduleDate]: {selected: true, marked: true, selectedColor: 'blue'} 
+            }}
             minDate={moment().format("YYYY-MM-DD")}
             onDayPress={(day) => {
+              ToastSuccess('Meeting scheduled successfully!');
+              setScheduleDate(day.dateString)
               console.log("selected day", day);
             }}
           />
