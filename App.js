@@ -15,14 +15,17 @@ const data = [
         image:
         "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
       name: "Ali Murtaza",
+      id: '123'
        }, {
         image:
         "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
       name: "Fazla Usman",
+      id: '123'
        }, {
         image:
         "https://cdn.pixabay.com/photo/2023/03/29/15/21/riverbank-7885727_1280.jpg",
       name: "Syed Abdul Moiz",
+      id: '123'
        }
       ],
       description: 'Small FYP management app that will let Supervisors track there students FYP progress.'

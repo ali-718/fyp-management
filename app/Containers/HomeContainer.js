@@ -52,7 +52,8 @@ const HomeContainer = (props) => {
           </View>
           {props.children}
         </View>
-        <Tabs activeTab={props.activeTab} />
+        {!props.noTab && 
+        <Tabs activeTab={props.activeTab} />}
       </SafeAreaView>
     </NativeBaseProvider>
   );

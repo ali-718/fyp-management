@@ -2,9 +2,10 @@ import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { primaryColor } from "../Utilities/Colors";
 
-export const Button = ({ text, bgColor, textColor, onPress, buttonStyles = {}, rounded, type = 'default' }) => {
+export const Button = ({ text, bgColor, textColor, onPress, buttonStyles = {}, rounded, type = 'default', disabled }) => {
   return (
     <TouchableOpacity
+      disabled={disabled}
       onPress={onPress}
       style={[type === 'default' ? styles.button : {alignItems: "center",
       justifyContent: "center"}, type === 'default' && { backgroundColor: bgColor || primaryColor }, buttonStyles, rounded && {borderRadius: 4}]}

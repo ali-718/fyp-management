@@ -1,5 +1,5 @@
-import { ScrollView, View } from "react-native";
-import React, { useState } from "react";
+import { ScrollView, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import HomeContainer from "../Containers/HomeContainer";
 import {
   primaryColor,
@@ -25,9 +25,12 @@ import { ListItem } from "../Components/ListItem";
 import { Button } from "../Components/Button";
 import { Modal } from "react-native-paper";
 import { Calendar } from "react-native-calendars";
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
 import moment from "moment";
 import { ToastSuccess } from "../Utilities/Toast";
+import { userType } from "../Utilities/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SupervisorCard } from "../Components/SupervisorCard";
 
 export const PorjectDetailPage = () => {
   const {
@@ -54,12 +57,34 @@ export const PorjectDetailPage = () => {
   } = useRoute().params;
   const [isModal, setIsModal] = useState(false);
   const [meetingModal, setMeetingModal] = useState(false);
-  const [scheduleDate, setScheduleDate] = useState('');
+  const [supervisorModal, setSupervisorModal] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState("");
+  const [supervisorsList, setSupervisorsList] = useState([]);
+  const [selectedSupervisor, setSelectedSupervisor] = useState("");
   const openModal = () => setIsModal(true);
   const closeModal = () => setIsModal(false);
 
   const openMeetingModal = () => setMeetingModal(true);
   const closeMeetingModal = () => setMeetingModal(false);
+
+  const openSupervisorModal = () => setSupervisorModal(true);
+  const closeSupervisorModal = () => { 
+    setSupervisorModal(false);
+    setSelectedSupervisor('')
+  }
+
+  const fetchSupervisors = () => {
+    const storedData = AsyncStorage.getItem("supervisor");
+    storedData.then((res) => {
+      if (res !== null) {
+        setSupervisorsList(JSON.parse(res));
+      }
+    });
+  };
+
+  useEffect(() => {
+    fetchSupervisors();
+  }, []);
 
   const rightSide = (
     <Menu
@@ -73,6 +98,9 @@ export const PorjectDetailPage = () => {
     >
       <Menu.Item onPress={openModal}>drop group</Menu.Item>
       <Menu.Item onPress={openMeetingModal}>schedule a meeting</Menu.Item>
+      {userType.coordinator && (
+        <Menu.Item onPress={openSupervisorModal}>assign a supervisor</Menu.Item>
+      )}
     </Menu>
   );
 
@@ -162,6 +190,68 @@ export const PorjectDetailPage = () => {
         </View>
       </ScrollView>
 
+      {/* supervisor modal */}
+      <Modal
+        contentContainerStyle={{ alignItems: "center" }}
+        onDismiss={closeSupervisorModal}
+        transparent
+        visible={supervisorModal}
+        animationType="slide"
+      >
+        <View
+          style={{
+            width: "90%",
+            backgroundColor: "white",
+            borderRadius: 8,
+            padding: 10,
+          }}
+        >
+          <ScrollView style={{ width: "100%", maxHeight: 250 }}>
+            {supervisorsList.map((item, i) => (
+              <TouchableOpacity
+                key={i}
+                style={{
+                  opacity: selectedSupervisor === item.id ? 0.5 : 1,
+                  marginTop: 10,
+                  backgroundColor:
+                    selectedSupervisor === item.id ? "gainsboro" : "white",
+                }}
+                onPress={() => setSelectedSupervisor(item.id)}
+              >
+                <SupervisorCard
+                  name={item?.name}
+                  email={item?.email}
+                  noOptions
+                />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          <View style={{ marginTop: 10, flexDirection: "row" }}>
+            <View style={{ width: "50%" }}>
+              <Button
+                disabled={!selectedSupervisor}
+                type="simple"
+                rounded
+                text={"SUBMIT"}
+                textColor={primaryGreenColor}
+                buttonStyles={{ marginVertical: 10 }}
+                onPress={closeSupervisorModal}
+              />
+            </View>
+            <View style={{ width: "50%" }}>
+              <Button
+                type="simple"
+                buttonStyles={{ marginVertical: 10 }}
+                text={"CANCEL"}
+                textColor={primaryRedColor}
+                onPress={closeSupervisorModal}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <Modal
         contentContainerStyle={{ alignItems: "center" }}
         onDismiss={closeModal}
@@ -188,26 +278,26 @@ export const PorjectDetailPage = () => {
             w="100%"
           />
 
-          <View style={{ marginTop: 10, flexDirection: 'row' }}>
-            <View style={{width: '50%'}}>
-            <Button
-              type="simple"
-              rounded
-              text={"SUBMIT"}
-              textColor={primaryGreenColor}
-              buttonStyles={{ marginVertical: 10 }}
-              onPress={closeModal}
-            />
+          <View style={{ marginTop: 10, flexDirection: "row" }}>
+            <View style={{ width: "50%" }}>
+              <Button
+                type="simple"
+                rounded
+                text={"SUBMIT"}
+                textColor={primaryGreenColor}
+                buttonStyles={{ marginVertical: 10 }}
+                onPress={closeModal}
+              />
             </View>
-            <View style={{width: '50%'}}>
-            <Button
-              type="simple"
-              buttonStyles={{ marginVertical: 10 }}
-              text={"CANCEL"}
-              textColor={primaryRedColor}
-              onPress={closeModal}
-            />
-          </View>
+            <View style={{ width: "50%" }}>
+              <Button
+                type="simple"
+                buttonStyles={{ marginVertical: 10 }}
+                text={"CANCEL"}
+                textColor={primaryRedColor}
+                onPress={closeModal}
+              />
+            </View>
           </View>
         </View>
       </Modal>
@@ -230,12 +320,16 @@ export const PorjectDetailPage = () => {
           <Calendar
             displayLoadingIndicator={false}
             markedDates={{
-              [scheduleDate]: {selected: true, marked: true, selectedColor: 'blue'} 
+              [scheduleDate]: {
+                selected: true,
+                marked: true,
+                selectedColor: "blue",
+              },
             }}
             minDate={moment().format("YYYY-MM-DD")}
             onDayPress={(day) => {
-              ToastSuccess('Meeting scheduled successfully!');
-              setScheduleDate(day.dateString)
+              ToastSuccess("Meeting scheduled successfully!");
+              setScheduleDate(day.dateString);
               console.log("selected day", day);
             }}
           />
