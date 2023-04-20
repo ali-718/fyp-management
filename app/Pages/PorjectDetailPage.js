@@ -236,7 +236,10 @@ export const PorjectDetailPage = () => {
                 text={"SUBMIT"}
                 textColor={primaryGreenColor}
                 buttonStyles={{ marginVertical: 10 }}
-                onPress={closeSupervisorModal}
+                onPress={() => {
+                  closeSupervisorModal()
+                  ToastSuccess('Supervisor assigned successfully')
+                }}
               />
             </View>
             <View style={{ width: "50%" }}>
