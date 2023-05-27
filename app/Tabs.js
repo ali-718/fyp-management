@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { primaryColor } from "./Utilities/Colors";
+import { primaryColor, primaryGreenColor, primaryRedColor } from "./Utilities/Colors";
 import { useNavigation } from "@react-navigation/native";
 import { userType } from "./Utilities/config";
+import { Modal } from "react-native-paper";
+import { SupervisorCard } from "./Components/SupervisorCard";
+import { Button } from "./Components/Button";
 
 export const Tabs = ({ activeTab }) => {
   const navigate = useNavigation();

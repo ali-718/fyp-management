@@ -7,36 +7,82 @@ import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native'
 import uuid from 'react-native-uuid';
+import { Modal } from 'react-native-paper'
+import { ScrollView } from 'react-native'
+import { SupervisorCard } from '../Components/SupervisorCard'
+import { primaryGreenColor, primaryRedColor } from '../Utilities/Colors'
+import { TouchableOpacity } from 'react-native'
+import { ToastSuccess } from '../Utilities/Toast'
+
+const studentList = [
+    {
+        name: 'Ali Murtaza',
+        id: 'CSC-18S-008'
+    },
+    {
+        name: 'Moiz Shah',
+        id: 'CSC-18S-129'
+    },
+    {
+        name: 'Raza Khalid',
+        id: 'CSC-18S-109'
+    },
+    {
+        name: 'Faheem Raza',
+        id: 'CSC-18S-117'
+    },
+    {
+        name: 'Hamza Bhatti',
+        id: 'CSC-18S-017'
+    },
+]
 
 export const AddProjectsPage = () => {
     const navigation = useNavigation()
     const { params = {} } = useRoute()
     const { data: paramsData = {} } = params
     const [name, setName] = useState('')
+    const [studentModal, setstudentModal] = useState(false);
     const [supervisor, setSupervisor] = useState('')
     const [students, setStudents] = useState('')
     const [description, setDescription] = useState('')
     const [isEdit, setIsEdit] = useState(false)
+    const [selectedStudents, setselectedStudents] = useState([]);
 
     useEffect(() => {
-      if (paramsData?.id) {
-        setName(paramsData.name)
-        setSupervisor(paramsData.supervisor)
-        setStudents(paramsData?.students?.join(', '))
-        setDescription(paramsData?.description)
-        setIsEdit(true)
-      }
+        if (paramsData?.id) {
+            setName(paramsData.name)
+            setSupervisor(paramsData.supervisor)
+            setStudents(paramsData?.students?.join(', '))
+            setDescription(paramsData?.description)
+            setIsEdit(true)
+        }
     }, [paramsData])
+
+    const closeStudentModal = () => {
+        setstudentModal(false);
+    }
+    const openStudentModal = () => setstudentModal(true);
+
+
+    const onSelectStudents = (student) => {
+        const check = selectedStudents.filter(data => data.id === student.id).length > 0
+        if (check) {
+            setselectedStudents(selectedStudents.filter(item => item.id !== student.id))
+            return
+        }
+        setselectedStudents([...selectedStudents, student])
+    }
 
     const AddProject = async () => {
         const storedData = await AsyncStorage.getItem('projects')
-        if (name.trim() === '' || supervisor.trim() === '' || students.trim() === '' || description.trim() === ''){
+        if (name.trim() === '' || supervisor.trim() === '' || students.trim() === '' || description.trim() === '') {
             Toast.show({
                 type: 'error',
                 text1: 'Error',
                 text2: 'Kindly fill all fields',
                 position: 'bottom'
-              });
+            });
             return
         }
 
@@ -45,23 +91,23 @@ export const AddProjectsPage = () => {
             const Index = data?.findIndex(item => item.id === paramsData?.id)
             if (Index > -1) {
                 data[Index] = {
-                id: paramsData?.id,
-                name,
-                supervisor,
-                students: students.split(','),
-                description: description
+                    id: paramsData?.id,
+                    name,
+                    supervisor,
+                    students: students.split(','),
+                    description: description
                 }
 
-            AsyncStorage.setItem('projects', JSON.stringify(data)).then(() => {
-                Toast.show({
-                    type: 'success',
-                    text1: 'Success',
-                    text2: 'Data updated successfully',
-                    position: 'top'
-                  });
-                navigation.navigate('Projects')
-            }) 
-            } 
+                AsyncStorage.setItem('projects', JSON.stringify(data)).then(() => {
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Success',
+                        text2: 'Data updated successfully',
+                        position: 'top'
+                    });
+                    navigation.navigate('Projects')
+                })
+            }
             return
         }
 
@@ -76,7 +122,7 @@ export const AddProjectsPage = () => {
             })
             AsyncStorage.setItem('projects', JSON.stringify(data)).then(() => {
                 navigation.navigate('Projects')
-            }) 
+            })
             return
         }
 
@@ -92,38 +138,91 @@ export const AddProjectsPage = () => {
         })
     }
 
-  return (
-    <HomeContainer back heading={isEdit ? 'Edit a project' : 'Add a project'}>
-        <View style={{ width: '100%', alignItems: 'center' }}>
-        <Image style={styles.logo} source={require("../assets/addProject.png")} />
+    return (
+        <HomeContainer back heading={isEdit ? 'Edit a project' : 'Add a project'}>
+            <View style={{ width: '100%', alignItems: 'center' }}>
+                <Image style={styles.logo} source={require("../assets/addProject.png")} />
 
-        <View style={{ width: '100%', marginTop: 20 }}>
-            <Input value={name} onChangeText={(val) => setName(val)} placeholder={"Project Name"} />
-            <View style={{ marginTop: 10 }}>
-                <Input value={supervisor} onChangeText={(val) => setSupervisor(val)} placeholder={"Supervisor"} />
+                <View style={{ width: '100%', marginTop: 20 }}>
+                    <Input value={name} onChangeText={(val) => setName(val)} placeholder={"Project Name"} />
+                    {/* <View style={{ marginTop: 10 }}>
+                        <Input value={supervisor} onChangeText={(val) => setSupervisor(val)} placeholder={"Supervisor"} />
+                    </View> */}
+                    <TouchableOpacity onPress={openStudentModal} style={{ marginTop: 10 }}>
+                        <Input pointerEvents='none' editable={false} value={selectedStudents.map(item => item.name).join(', ')} placeholder={"Students"} />
+                    </TouchableOpacity>
+                    <View style={{ marginTop: 10 }}>
+                        <Input textArea value={description} onChangeText={(val) => setDescription(val)} placeholder={"Description"} />
+                    </View>
+                    <View style={{ marginTop: 20 }}>
+                        <Button
+                            text={isEdit ? 'EDIT' : 'ADD'} textColor={'#fff'}
+                            onPress={AddProject}
+                        />
+                    </View>
+                </View>
             </View>
-            <View style={{ marginTop: 10 }}>
-                <Input value={students} onChangeText={(val) => setStudents(val)} placeholder={"Students"} />
-            </View>
-            <View style={{ marginTop: 10 }}>
-                <Input textArea value={description} onChangeText={(val) => setDescription(val)} placeholder={"Description"} />
-            </View>
-            <View style={{ marginTop: 20 }}>
-            <Button
-        text={isEdit ? 'EDIT' : 'ADD'} textColor={'#fff'}
-        onPress={AddProject}
-        />
-            </View>
-        </View>
-        </View>
+            {/* student modal */}
+            <Modal
+                contentContainerStyle={{ alignItems: "center" }}
+                onDismiss={closeStudentModal}
+                transparent
+                visible={studentModal}
+                animationType="slide"
+            >
+                <View
+                    style={{
+                        width: "90%",
+                        backgroundColor: "white",
+                        borderRadius: 8,
+                        padding: 10,
+                    }}
+                >
+                    <ScrollView style={{ width: "100%", maxHeight: 250 }}>
+                        {studentList.map((item, i) => (
+                            <TouchableOpacity
+                                key={i}
+                                style={{
+                                    opacity: selectedStudents.filter(data => data.id === item.id).length > 0 ? 0.5 : 1,
+                                    marginTop: 10,
+                                    backgroundColor:
+                                        selectedStudents.filter(data => data.id === item.id).length > 0 ? "gainsboro" : "white",
+                                }}
+                                onPress={() => onSelectStudents(item)}
+                            >
+                                <SupervisorCard
+                                    name={item?.name}
+                                    email={item?.id}
+                                    noOptions
+                                />
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+
+                    <View style={{ marginTop: 10, flexDirection: "row" }}>
+                       
+                        <View style={{ width: "100%" }}>
+                            <Button
+                                type="simple"
+                                buttonStyles={{ marginVertical: 10 }}
+                                text={"CLOSE"}
+                                textColor={primaryRedColor}
+                                onPress={() => {
+                                    closeStudentModal()
+                                }}
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </HomeContainer>
-  )
+    )
 }
 
 const styles = {
     logo: {
         width: 100,
         height: 100,
-        marginTop:40,
-      }
+        marginTop: 40,
+    }
 }
