@@ -13,29 +13,8 @@ import { SupervisorCard } from '../Components/SupervisorCard'
 import { primaryGreenColor, primaryRedColor } from '../Utilities/Colors'
 import { TouchableOpacity } from 'react-native'
 import { ToastSuccess } from '../Utilities/Toast'
-
-const studentList = [
-    {
-        name: 'Ali Murtaza',
-        id: 'CSC-18S-008'
-    },
-    {
-        name: 'Moiz Shah',
-        id: 'CSC-18S-129'
-    },
-    {
-        name: 'Raza Khalid',
-        id: 'CSC-18S-109'
-    },
-    {
-        name: 'Faheem Raza',
-        id: 'CSC-18S-117'
-    },
-    {
-        name: 'Hamza Bhatti',
-        id: 'CSC-18S-017'
-    },
-]
+import { useSupervisorGet } from '../hooks/supervisorHook'
+import { useStudentGet } from '../hooks/studenkHook'
 
 export const AddProjectsPage = () => {
     const navigation = useNavigation()
@@ -43,14 +22,17 @@ export const AddProjectsPage = () => {
     const { data: paramsData = {} } = params
     const [name, setName] = useState('')
     const [studentModal, setstudentModal] = useState(false);
-    const [supervisor, setSupervisor] = useState('')
+    const [supervisorModal, setSupervisorModal] = useState(false);
+    const [supervisor, setSupervisor] = useState({})
     const [students, setStudents] = useState('')
     const [description, setDescription] = useState('')
     const [isEdit, setIsEdit] = useState(false)
     const [selectedStudents, setselectedStudents] = useState([]);
+    const { data: supervisorList } = useSupervisorGet();
+    const { data: studetsList } = useStudentGet();
 
     useEffect(() => {
-        if (paramsData?.id) {
+        if (paramsData?._id) {
             setName(paramsData.name)
             setSupervisor(paramsData.supervisor)
             setStudents(paramsData?.students?.join(', '))
@@ -63,16 +45,20 @@ export const AddProjectsPage = () => {
         setstudentModal(false);
     }
     const openStudentModal = () => setstudentModal(true);
+    const openSupervisorModalModal = () => setSupervisorModal(true);
+    const closeSupervisorModal = () => setSupervisorModal(false);
 
 
     const onSelectStudents = (student) => {
-        const check = selectedStudents.filter(data => data.id === student.id).length > 0
+        const check = selectedStudents.filter(data => data._id === student._id).length > 0
         if (check) {
-            setselectedStudents(selectedStudents.filter(item => item.id !== student.id))
+            setselectedStudents(selectedStudents.filter(item => item._id !== student._id))
             return
         }
         setselectedStudents([...selectedStudents, student])
     }
+
+    const onSelectSupervisor = (supervisor) => setSupervisor(supervisor)
 
     const AddProject = async () => {
         const storedData = await AsyncStorage.getItem('projects')
@@ -88,10 +74,10 @@ export const AddProjectsPage = () => {
 
         if (isEdit) {
             const data = JSON.parse(storedData)
-            const Index = data?.findIndex(item => item.id === paramsData?.id)
+            const Index = data?.findIndex(item => item._id === paramsData?._id)
             if (Index > -1) {
                 data[Index] = {
-                    id: paramsData?.id,
+                    id: paramsData?._id,
                     name,
                     supervisor,
                     students: students.split(','),
@@ -145,9 +131,9 @@ export const AddProjectsPage = () => {
 
                 <View style={{ width: '100%', marginTop: 20 }}>
                     <Input value={name} onChangeText={(val) => setName(val)} placeholder={"Project Name"} />
-                    {/* <View style={{ marginTop: 10 }}>
-                        <Input value={supervisor} onChangeText={(val) => setSupervisor(val)} placeholder={"Supervisor"} />
-                    </View> */}
+                    <TouchableOpacity onPress={openSupervisorModalModal} style={{ marginTop: 10 }}>
+                        <Input value={supervisor?.name || ''} pointerEvents='none' editable={false} placeholder={"Supervisor"} />
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={openStudentModal} style={{ marginTop: 10 }}>
                         <Input pointerEvents='none' editable={false} value={selectedStudents.map(item => item.name).join(', ')} placeholder={"Students"} />
                     </TouchableOpacity>
@@ -162,6 +148,60 @@ export const AddProjectsPage = () => {
                     </View>
                 </View>
             </View>
+            {/* supervisor modal */}
+            <Modal
+                contentContainerStyle={{ alignItems: "center" }}
+                onDismiss={closeSupervisorModal}
+                transparent
+                visible={supervisorModal}
+                animationType="slide"
+            >
+                <View
+                    style={{
+                        width: "90%",
+                        backgroundColor: "white",
+                        borderRadius: 8,
+                        padding: 10,
+                    }}
+                >
+                    <ScrollView style={{ width: "100%", maxHeight: 250 }}>
+                        {supervisorList.map((item, i) => (
+                            <TouchableOpacity
+                                key={i}
+                                style={{
+                                    opacity: supervisor._id === item._id ? 0.5 : 1,
+                                    marginTop: 10,
+                                    backgroundColor:
+                                    supervisor._id === item._id ? "gainsboro" : "white",
+                                }}
+                                onPress={() => onSelectSupervisor(item)}
+                            >
+                                <SupervisorCard
+                                    name={item?.name}
+                                    email={item?.email}
+                                    noOptions
+                                />
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+
+                    <View style={{ marginTop: 10, flexDirection: "row" }}>
+                       
+                        <View style={{ width: "100%" }}>
+                            <Button
+                                type="simple"
+                                buttonStyles={{ marginVertical: 10 }}
+                                text={"CLOSE"}
+                                textColor={primaryRedColor}
+                                onPress={() => {
+                                    closeSupervisorModal()
+                                }}
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
             {/* student modal */}
             <Modal
                 contentContainerStyle={{ alignItems: "center" }}
@@ -179,20 +219,20 @@ export const AddProjectsPage = () => {
                     }}
                 >
                     <ScrollView style={{ width: "100%", maxHeight: 250 }}>
-                        {studentList.map((item, i) => (
+                        {studetsList.map((item, i) => (
                             <TouchableOpacity
                                 key={i}
                                 style={{
-                                    opacity: selectedStudents.filter(data => data.id === item.id).length > 0 ? 0.5 : 1,
+                                    opacity: selectedStudents.filter(data => data._id === item._id).length > 0 ? 0.5 : 1,
                                     marginTop: 10,
                                     backgroundColor:
-                                        selectedStudents.filter(data => data.id === item.id).length > 0 ? "gainsboro" : "white",
+                                        selectedStudents.filter(data => data._id === item._id).length > 0 ? "gainsboro" : "white",
                                 }}
                                 onPress={() => onSelectStudents(item)}
                             >
                                 <SupervisorCard
                                     name={item?.name}
-                                    email={item?.id}
+                                    email={item?._id}
                                     noOptions
                                 />
                             </TouchableOpacity>
