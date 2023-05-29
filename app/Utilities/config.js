@@ -1,6 +1,8 @@
 export const userType = {
-    coordinator: 'coordinator',
-    admin: 'admin',
-    supervisor: 'supervisor',
-    student: 'student',
+    coordinator: 'Coordinator',
+    admin: 'Admin',
+    supervisor: 'Supervisor',
+    student: 'Student',
 }
+
+export const trimCheck = (value = '') => value?.trim() === '' ? true : false;

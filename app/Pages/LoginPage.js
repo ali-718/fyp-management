@@ -1,12 +1,33 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { Button } from "../Components/Button";
 import { Input } from "../Containers/Input";
 import { primaryColor } from "../Utilities/Colors";
+import { useLogin } from "../hooks/AuthHook";
+import { trimCheck } from "../Utilities/config";
+import { ToastError } from "../Utilities/Toast";
 
 const LoginPage = () => {
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('wajiha@sup.smiu.com');
+  const [password, setPassword] = useState('P@ssword09AM');
+
+  const onLogin = async () => { 
+    if (trimCheck(email) || trimCheck(password)) {
+      ToastError('Fill all fields');
+      return
+    }
+    setIsLoading(true)
+    useLogin(email, password).then(() => {
+      navigation.navigate("Projects")
+    }).catch(e => {
+      ToastError(e)
+    })
+    setIsLoading(false)
+  }
+
   return (
     <View style={styles.container}>
       <View
@@ -16,11 +37,11 @@ const LoginPage = () => {
         }}
       >
         <Image style={styles.logo} source={require("../assets/Login.png")} />
-        <Input placeholder={"Username"} />
-        <Input placeholder="Password" secureTextEntry={true} />
+        <Input value={email} onChangeText={val => setEmail(val)} placeholder={"Username"} />
+        <Input value={password} onChangeText={val => setPassword(val)} placeholder="Password" secureTextEntry={true} />
         <Button
         text={'LOGIN'} bgColor={primaryColor} textColor={'#fff'}
-        onPress={() => navigation.navigate("Projects")}
+        onPress={onLogin}
         />
       </View>
     </View>
