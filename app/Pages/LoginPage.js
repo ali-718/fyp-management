@@ -11,8 +11,8 @@ import { ToastError } from "../Utilities/Toast";
 const LoginPage = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('wajiha@sup.smiu.com');
-  const [password, setPassword] = useState('P@ssword09AM');
+  const [email, setEmail] = useState('ameen@coord.smiu.com');
+  const [password, setPassword] = useState('P@ssword06AM!');
 
   const onLogin = async () => { 
     if (trimCheck(email) || trimCheck(password)) {

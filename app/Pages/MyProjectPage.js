@@ -20,7 +20,7 @@ import {
   HamburgerIcon,
   TextArea,
 } from "native-base";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { ListItem } from "../Components/ListItem";
 import { Button } from "../Components/Button";
 import { Modal } from "react-native-paper";
@@ -31,16 +31,20 @@ import { ToastSuccess } from "../Utilities/Toast";
 import { userType } from "../Utilities/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SupervisorCard } from "../Components/SupervisorCard";
-import { updateProject } from "../hooks/projectHook";
+import { useFetchProjectById } from "../hooks/projectHook";
+import { useFetchUser } from "../hooks/AuthHook";
+import { FullPageLoading } from "../Components/FullPageLoading";
 
-export const PorjectDetailPage = () => {
+export const MyProjectPage = () => {
+  const navigation = useNavigation();
+  const [user, setUser] = useState({});
+  const { project = {}, isLoading } = useFetchProjectById(user?.projectId);
   const {
-    title: name = "",
-    projectMembers: students = [],
-    description = "",
     supervisor = {},
-    _id = ''
-  } = useRoute().params;
+    description = "",
+    title: name,
+    projectMembers: students = [],
+  } = project;
   const [isModal, setIsModal] = useState(false);
   const [meetingModal, setMeetingModal] = useState(false);
   const [supervisorModal, setSupervisorModal] = useState(false);
@@ -54,10 +58,10 @@ export const PorjectDetailPage = () => {
   const closeMeetingModal = () => setMeetingModal(false);
 
   const openSupervisorModal = () => setSupervisorModal(true);
-  const closeSupervisorModal = () => { 
+  const closeSupervisorModal = () => {
     setSupervisorModal(false);
-    setSelectedSupervisor('')
-  }
+    setSelectedSupervisor("");
+  };
 
   const fetchSupervisors = () => {
     const storedData = AsyncStorage.getItem("supervisor");
@@ -70,15 +74,13 @@ export const PorjectDetailPage = () => {
 
   useEffect(() => {
     fetchSupervisors();
+    (async () => {
+      const user = await useFetchUser();
+      if (user?._id) {
+        setUser(user);
+      }
+    })();
   }, []);
-
-  const onUpdate = async (type) => {
-    if (type === 'drop') {
-      updateProject({ _id, supervisor: {}, isApprovedByCoordinator: false})
-      return
-    }
-    updateProject({ _id, isApprovedByCoordinator: true})
-  }
 
   const rightSide = (
     <Menu
@@ -90,13 +92,36 @@ export const PorjectDetailPage = () => {
         );
       }}
     >
-      <Menu.Item onPress={openModal}>drop supervisor</Menu.Item>
-      <Menu.Item onPress={onUpdate}>approve supervisor</Menu.Item>
+      <Menu.Item onPress={openMeetingModal}>schedule a meeting</Menu.Item>
     </Menu>
   );
 
+  if (!user?.projectId) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Text style={{fontSize: 18}}>You are not ennrolled in any project</Text>
+        <Button
+          rounded
+          text={"Create new Project"}
+          buttonStyles={{ marginTop: 20, width: "70%" }}
+          onPress={() => {
+            navigation.navigate("addProject");
+          }}
+        />
+      </View>
+    );
+  }
+
+  if (isLoading) {
+    return <FullPageLoading />;
+  }
+
   return (
-    <HomeContainer rightSide={rightSide} back heading={"Project detail"}>
+    <HomeContainer
+      activeTab={"MyProject"}
+      rightSide={rightSide}
+      heading={"My Project"}
+    >
       <ScrollView showsVerticalScrollIndicator={false}>
         <Heading mt="5" size="md">
           {name}
@@ -141,7 +166,7 @@ export const PorjectDetailPage = () => {
           style={{ flexDirection: "row", marginTop: 20, alignItems: "center" }}
         >
           <Heading size="md">Reports</Heading>
-          {supervisor && (
+          {supervisor?.name && (
             <Text
               fontSize="xs"
               _light={{
@@ -228,8 +253,8 @@ export const PorjectDetailPage = () => {
                 textColor={primaryGreenColor}
                 buttonStyles={{ marginVertical: 10 }}
                 onPress={() => {
-                  closeSupervisorModal()
-                  ToastSuccess('Supervisor assigned successfully')
+                  closeSupervisorModal();
+                  ToastSuccess("Supervisor assigned successfully");
                 }}
               />
             </View>
@@ -261,23 +286,33 @@ export const PorjectDetailPage = () => {
             padding: 10,
           }}
         >
-          <Text style={{fontSize: 16}}>Are you sure you want to drop the supervisor ?</Text>
+          <TextArea
+            style={{
+              borderWidth: 1,
+              borderRadius: 8,
+              borderColor: "gainsboro",
+            }}
+            h={20}
+            placeholder="Write the drop reason here..."
+            w="100%"
+          />
+
           <View style={{ marginTop: 10, flexDirection: "row" }}>
             <View style={{ width: "50%" }}>
               <Button
                 type="simple"
                 rounded
-                text={"Yes"}
+                text={"SUBMIT"}
                 textColor={primaryGreenColor}
                 buttonStyles={{ marginVertical: 10 }}
-                onPress={() => onUpdate("drop")}
+                onPress={closeModal}
               />
             </View>
             <View style={{ width: "50%" }}>
               <Button
                 type="simple"
                 buttonStyles={{ marginVertical: 10 }}
-                text={"No"}
+                text={"CANCEL"}
                 textColor={primaryRedColor}
                 onPress={closeModal}
               />

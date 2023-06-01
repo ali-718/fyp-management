@@ -4,7 +4,7 @@ import { Heading, Stack, Text } from 'native-base'
 import { primaryColor, primaryGreenColor, primaryRedColor } from '../Utilities/Colors'
 import { Button } from './Button'
 
-export const ProjectCard = ({ onPress, heading, supervisor, students = [], description, onUpdate, onDelete }) => {
+export const ProjectCard = ({ onPress, heading, supervisor, students = [], description }) => {
     return (
         <TouchableOpacity onPress={onPress} style={{ borderWidth: 1, borderRadius: 8, padding: 12, borderColor: 'gainsboro' }}>
             <Stack space={2}>

@@ -1,25 +1,31 @@
-import { View, Text } from 'react-native'
 import React, { useEffect } from 'react'
-import { ActivityIndicator } from 'react-native-paper'
 import { useFetchUser } from '../hooks/AuthHook'
 import { useNavigation } from '@react-navigation/native'
+import { userType } from '../Utilities/config'
+import { FullPageLoading } from '../Components/FullPageLoading'
 
 export const AuthCheckingPage = () => {
     const navigation = useNavigation()
 
-    useEffect(async () => {
+    useEffect(() => {
+      (async () => {
       const user = await useFetchUser();
+      console.log({user})
       if (user?._id) {
+        if (user?.type === userType.student) {
+          navigation.navigate('MyProject')
+          return
+        }
+        if (user?.type === userType.coordinator) {
+          navigation.navigate('ProjectsPageForCoordinator')
+          return
+        }
         navigation.navigate('Projects')
+        return
       }
-      else {
       navigation.navigate('Login')
-      }
+      })()
     }, [])
     
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <ActivityIndicator />
-    </View>
-  )
+  return <FullPageLoading />
 }

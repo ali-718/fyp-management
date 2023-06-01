@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { client } from "../Utilities/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const useLogin = async (email, password) => {
     try {
@@ -28,3 +28,18 @@ export const useFetchUser = async () => {
   }
   return {}
 }
+
+// export const useFetchUser = (id) => {
+//   const [user, setUser] = useState({})
+
+//   useEffect(() => {
+//     (async () => {
+//       const data = await AsyncStorage.getItem('user')
+//       if (data != null) {
+//         setUser(JSON.parse(data));
+//       }
+//     })()
+//   }, [id])
+  
+//   return user
+// }
