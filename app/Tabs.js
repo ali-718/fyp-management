@@ -59,17 +59,17 @@ export const Tabs = ({ activeTab }) => {
     return (<View style={styles.bottomNavigation}>
         <TouchableOpacity
         style={styles.tab}
-        onPress={() => handleTabPress("MyProject")}
+        onPress={() => handleTabPress("ProjectsPageForCoordinator")}
       >
         <MaterialIcons
           name="home"
           size={24}
-          color={activeTab === "MyProject" ? primaryColor : "#555"}
+          color={activeTab === "ProjectsPageForCoordinator" ? primaryColor : "#555"}
         />
       </TouchableOpacity>
-        <TouchableOpacity
+      <TouchableOpacity
         style={styles.tab}
-        onPress={() => handleTabPress("Meetings")}
+        onPress={() => handleTabPress("Settings")}
       >
         <MaterialIcons
           name="settings"
@@ -94,30 +94,16 @@ export const Tabs = ({ activeTab }) => {
         />
       </TouchableOpacity>
 
-      {userType.student === user.type &&
       <TouchableOpacity
         style={styles.tab}
-        onPress={() => handleTabPress("search")}
+        onPress={() => handleTabPress("Settings")}
       >
         <MaterialIcons
-          name="assessment"
+          name="settings"
           size={24}
-          color={activeTab === "search" ? primaryColor : "#555"}
+          color={activeTab === "Settings" ? primaryColor : "#555"}
         />
-      </TouchableOpacity>}
-
-      {userType.coordinator === user.type && (
-        <TouchableOpacity
-          style={styles.tab}
-          onPress={() => handleTabPress("supervisor")}
-        >
-          <MaterialIcons
-            name="people"
-            size={24}
-            color={activeTab === "supervisor" ? primaryColor : "#555"}
-          />
-        </TouchableOpacity>
-      )}
+      </TouchableOpacity>
     </View>
   );
 };

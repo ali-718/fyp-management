@@ -51,7 +51,7 @@ export const ProjectsPageForCoordinator = () => {
   }
 
   return (
-    <HomeContainer activeTab='Projects' heading={"Groups"}>
+    <HomeContainer activeTab='ProjectsPageForCoordinator' heading={"Groups"}>
       <View style={{ flex: 1, width: "100%", marginTop: 20 }}>
         <View style={{ width: "100%", flex: 1 }}>
           <FlatList

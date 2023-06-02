@@ -7,12 +7,15 @@ import { primaryColor } from "../Utilities/Colors";
 import { useLogin } from "../hooks/AuthHook";
 import { trimCheck } from "../Utilities/config";
 import { ToastError } from "../Utilities/Toast";
+import HomeContainer from "../Containers/HomeContainer";
 
 const LoginPage = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('ameen@coord.smiu.com');
-  const [password, setPassword] = useState('P@ssword06AM!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  // const [email, setEmail] = useState('ameen@coord.smiu.com');
+  // const [password, setPassword] = useState('P@ssword06AM!');
 
   const onLogin = async () => { 
     if (trimCheck(email) || trimCheck(password)) {
@@ -21,14 +24,18 @@ const LoginPage = () => {
     }
     setIsLoading(true)
     useLogin(email, password).then(() => {
-      navigation.navigate("Projects")
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'AuthChecking' }],
+      })
     }).catch(e => {
       ToastError(e)
-    })
     setIsLoading(false)
+    })
   }
 
   return (
+    <HomeContainer isLoading={isLoading} noTab>
     <View style={styles.container}>
       <View
         style={{
@@ -45,6 +52,7 @@ const LoginPage = () => {
         />
       </View>
     </View>
+    </HomeContainer>
   );
 };
 

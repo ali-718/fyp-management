@@ -1,9 +1,10 @@
-import { SafeAreaView, TouchableOpacity, View } from "react-native";
+import { Dimensions, SafeAreaView, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Heading, Icon, NativeBaseProvider, ArrowBackIcon } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import safeareaView from "../Utilities/safeareaView";
 import { Tabs } from "../Tabs";
+import { ActivityIndicator } from "react-native-paper";
 
 const HomeContainer = (props) => {
   const navigation = useNavigation();
@@ -52,9 +53,22 @@ const HomeContainer = (props) => {
           </View>
           {props.children}
         </View>
-        {!props.noTab && 
-        <Tabs activeTab={props.activeTab} />}
+        {!props.noTab && <Tabs activeTab={props.activeTab} />}
       </SafeAreaView>
+      {props.isLoading && (
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            height: Dimensions.get("window").height,
+            backgroundColor: "rgba(255,255,255,0.6)",
+            position: "absolute",
+          }}
+        >
+          <ActivityIndicator size={"large"} />
+        </View>
+      )}
     </NativeBaseProvider>
   );
 };
