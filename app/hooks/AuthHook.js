@@ -28,12 +28,21 @@ export const useFetchUser = async () => {
     const finalData = JSON.parse(data)
     try {
     const user = await client.get(`user/get/${finalData?._id}`)
-    return user;
+    return user.data?.data;
     }
     catch (e) {
       ToastError(errorModifier(e));
       return finalData;
     }
+  }
+  return {}
+}
+
+export const useFetchUserFromLocalStorage = async () => {
+  const data = await AsyncStorage.getItem('user')
+  if (data != null) {
+    const finalData = JSON.parse(data)
+    return finalData;
   }
   return {}
 }

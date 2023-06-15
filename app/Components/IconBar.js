@@ -3,16 +3,16 @@ import React from 'react'
 import { MaterialIcons } from '@expo/vector-icons'
 import { primaryRedColor } from '../Utilities/Colors'
 
-export const IconBar = ({iconName, text, onPress}) => {
+export const IconBar = ({iconName, text, onPress, color}) => {
   return (
     <TouchableOpacity onPress={onPress} style={{flexDirection: 'row', alignItems: 'center'}}>
        <MaterialIcons
           name={iconName}
           size={24}
-          color={primaryRedColor}
+          color={color || primaryRedColor}
         />
 
-        <Text style={{color: primaryRedColor, marginLeft: 10, fontSize: 18, fontWeight: 'bold'}}>{text}</Text>
+        <Text style={{color: color || primaryRedColor, marginLeft: 10, fontSize: 18, fontWeight: 'bold'}}>{text}</Text>
     </TouchableOpacity>
   )
 }

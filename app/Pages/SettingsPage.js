@@ -5,7 +5,8 @@ import { IconBar } from '../Components/IconBar'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/native'
 import { MaterialIcons } from '@expo/vector-icons'
-import { useFetchUser } from '../hooks/AuthHook'
+import { useFetchUser, useFetchUserFromLocalStorage } from '../hooks/AuthHook'
+import { userType } from '../Utilities/config'
 
 export const SettingsPage = () => {
   const [user, setUser] = useState({});
@@ -21,7 +22,7 @@ export const SettingsPage = () => {
 
     useEffect(() => {
       (async () => {
-        const user = await useFetchUser();
+        const user = await useFetchUserFromLocalStorage();
         setUser(user)
       })()
     }, [])
@@ -43,8 +44,11 @@ export const SettingsPage = () => {
     <Text style={{marginTop: 20, fontSize: 20}}>{user?.name}</Text>
     <Text style={{marginTop: 5, fontSize: 20}}>{user?.email}</Text>
     </View>
-    <View style={{marginTop: 30}} />
+    <View style={{marginTop: 40}} />
+    {userType.supervisor === user.type && <IconBar color={"black"} onPress={() => navigation.navigate('Meetings')} iconName={'calendar-today'} text={'Meetings'} />}
+    <View style={{marginTop:15}} />
     <IconBar onPress={onLogout} iconName={'logout'} text={'Logout'} />
+    
     </HomeContainer>
   )
 }

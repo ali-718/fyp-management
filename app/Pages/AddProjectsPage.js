@@ -16,10 +16,11 @@ import { ToastError, ToastSuccess } from "../Utilities/Toast";
 import { useSupervisorGet } from "../hooks/supervisorHook";
 import { useStudentGet } from "../hooks/studenkHook";
 import { createProject } from "../hooks/projectHook";
-import { errorModifier } from "../hooks/AuthHook";
+import { errorModifier, useFetchUserFromLocalStorage } from "../hooks/AuthHook";
 
 export const AddProjectsPage = () => {
   const navigation = useNavigation();
+  const [user, setUser] = useState({});
   const { params = {} } = useRoute();
   const { data: paramsData = {} } = params;
   const [name, setName] = useState("");
@@ -42,6 +43,15 @@ export const AddProjectsPage = () => {
       setIsEdit(true);
     }
   }, [paramsData]);
+
+  useEffect(() => {
+    (async () => {
+      const user = await useFetchUserFromLocalStorage();
+      if (user?._id) {
+        setUser(user);
+      }
+    })();
+  }, []);
 
   const closeStudentModal = () => {
     setstudentModal(false);
@@ -109,7 +119,7 @@ export const AddProjectsPage = () => {
     const data = {
       title: name,
       description,
-      teamLeadId: "e73c60a7-c296-4907-9a9e-9230a2bb5d4b",
+      teamLeadId: user?._id,
       supervisorId: supervisor?._id,
       projectMembers: selectedStudents.map(item => item?._id),
     };
