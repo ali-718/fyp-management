@@ -8,16 +8,16 @@ import { Button } from "../Components/Button";
 import { primaryColor } from "../Utilities/Colors";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { FAB } from "react-native-paper";
+import { useFetchAllProjects, useFetchUnapprovedProject } from "../hooks/projectHook";
+import { FullPageLoading } from "../Components/FullPageLoading";
 
-const renderItem = ({ item }, onUpdate, onDelete, onPress) => (
+const renderItem = ({ item }, onPress) => (
   <View style={{ marginTop: 10 }}>
     <ProjectCard
-      heading={item?.name}
-      supervisor={item?.supervisor}
-      students={item?.students}
+      heading={item?.title}
+      supervisor={item?.supervisor?.name}
+      students={item?.projectMembers}
       description={item?.description}
-      onUpdate={() => onUpdate(item)}
-      onDelete={() => onDelete(item?.id)}
       onPress={() => onPress(item)}
     />
   </View>
@@ -33,83 +33,35 @@ const _emptyComponent = () => (
       paddingTop: 50,
     }}
   >
-    <Text>Sorry there are no projects!</Text>
+    <Text>Sorry there are no projects to review!</Text>
   </View>
 );
 
-const ProjectsPage = () => {
+export const ProjectsPage = () => {
+  const {isLoading, projects = []} = useFetchAllProjects() 
   const navigation = useNavigation();
-  const [data, setData] = useState([]);
 
-  useFocusEffect(() => {
-    const storedData = AsyncStorage.getItem("projects");
-    storedData.then((res) => {
-      if (res !== null) {
-        setData(JSON.parse(res));
-      }
-    });
-  });
-
-  const onUpdate = (data) => {
-    navigation.navigate("addProject", { data });
-  };
-
-  const onDelete = (id) => {
-    Alert.alert("Warning!", "are you sure you want to delete ?", [
-      {
-        text: "Yes",
-        onPress: () => deleteProject(id),
-      },
-      {
-        text: "No",
-        onPress: () => {},
-      },
-    ]);
-  };
-
-  const deleteProject = async (id) => {
-    const storedData = await AsyncStorage.getItem("projects");
-    let data = JSON.parse(storedData);
-    data = data.filter((item) => item.id !== id);
-    AsyncStorage.setItem("projects", JSON.stringify(data)).then(() => {
-      setData(data);
-    });
-  };
 
   const onPressProject = (item) => {
     navigation.navigate("projectDetail", item);
   };
 
   return (
-    <HomeContainer activeTab='Projects' heading={"Groups"}>
+    <HomeContainer isLoading={isLoading} activeTab='Projects' heading={"Projects"}>
       <View style={{ flex: 1, width: "100%", marginTop: 20 }}>
         <View style={{ width: "100%", flex: 1 }}>
           <FlatList
             key={(item, i) => `${i}`}
-            data={data}
+            data={projects}
             renderItem={(item) =>
-              renderItem(item, onUpdate, onDelete, onPressProject)
+              renderItem(item, onPressProject)
             }
             style={{ flex: 1, width: "100%" }}
             contentContainerStyle={{ paddingBottom: 10 }}
             ListEmptyComponent={_emptyComponent}
-          />
-          <FAB
-            icon="plus"
-            style={{
-              position: "absolute",
-              margin: 16,
-              right: 0,
-              bottom: 0,
-              backgroundColor: primaryColor,
-            }}
-            color="white"
-            onPress={() => navigation.navigate("addProject")}
           />
         </View>
       </View>
     </HomeContainer>
   );
 };
-
-export default ProjectsPage;

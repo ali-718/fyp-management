@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { client } from "../Utilities/client";
 import { useEffect, useState } from "react";
+import { ToastError } from "../Utilities/Toast";
 
 export const useLogin = async (email, password) => {
     try {
@@ -24,10 +25,20 @@ catch (e) {
 export const useFetchUser = async () => {
   const data = await AsyncStorage.getItem('user')
   if (data != null) {
-    return JSON.parse(data)
+    const finalData = JSON.parse(data)
+    try {
+    const user = await client.get(`user/get/${finalData?._id}`)
+    return user;
+    }
+    catch (e) {
+      ToastError(errorModifier(e));
+      return finalData;
+    }
   }
   return {}
 }
+
+export const errorModifier = e => e?.response?.data?.error || 'Some error Occoured';
 
 // export const useFetchUser = (id) => {
 //   const [user, setUser] = useState({})

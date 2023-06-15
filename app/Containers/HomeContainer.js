@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import safeareaView from "../Utilities/safeareaView";
 import { Tabs } from "../Tabs";
 import { ActivityIndicator } from "react-native-paper";
+import { FullPageLoading } from "../Components/FullPageLoading";
 
 const HomeContainer = (props) => {
   const navigation = useNavigation();
@@ -51,11 +52,11 @@ const HomeContainer = (props) => {
             </View>
             <View>{props.rightSide}</View>
           </View>
-          {props.children}
+          {props.isLoading ? <FullPageLoading /> : props.children}
         </View>
         {!props.noTab && <Tabs activeTab={props.activeTab} />}
       </SafeAreaView>
-      {props.isLoading && (
+      {/* {props.isLoading && (
         <View
           style={{
             alignItems: "center",
@@ -68,7 +69,7 @@ const HomeContainer = (props) => {
         >
           <ActivityIndicator size={"large"} />
         </View>
-      )}
+      )} */}
     </NativeBaseProvider>
   );
 };

@@ -31,14 +31,15 @@ import { ToastSuccess } from "../Utilities/Toast";
 import { userType } from "../Utilities/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SupervisorCard } from "../Components/SupervisorCard";
-import { useFetchProjectById } from "../hooks/projectHook";
+import { useFetchProjectById, useFetchReportByProject } from "../hooks/projectHook";
 import { useFetchUser } from "../hooks/AuthHook";
 import { FullPageLoading } from "../Components/FullPageLoading";
 
 export const MyProjectPage = () => {
   const navigation = useNavigation();
   const [user, setUser] = useState({});
-  const { project = {}, isLoading } = useFetchProjectById(user?.projectId);
+  const { project = {}, isLoading } = useFetchProjectById(user?.project);
+  const {reports} = useFetchReportByProject(user?.project);
   const {
     supervisor = {},
     description = "",
@@ -96,10 +97,13 @@ export const MyProjectPage = () => {
     </Menu>
   );
 
-  if (!user?.projectId) {
+  if (!user?.project) {
     return (
+      <HomeContainer
+      activeTab={"MyProject"}
+    >
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text style={{fontSize: 18}}>You are not ennrolled in any project</Text>
+        <Text style={{fontSize: 18}}>You are not enrolled in any project</Text>
         <Button
           rounded
           text={"Create new Project"}
@@ -109,18 +113,16 @@ export const MyProjectPage = () => {
           }}
         />
       </View>
+      </HomeContainer>
     );
-  }
-
-  if (isLoading) {
-    return <FullPageLoading />;
   }
 
   return (
     <HomeContainer
       activeTab={"MyProject"}
-      rightSide={rightSide}
+      rightSide={!isLoading && rightSide}
       heading={"My Project"}
+      isLoading={isLoading}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         <Heading mt="5" size="md">
@@ -182,10 +184,10 @@ export const MyProjectPage = () => {
         </View>
 
         <View style={{ width: "100%", paddingBottom: 20 }}>
-          {[1, 2, 3].map((item, i) => (
+          {reports.map((item, i) => (
             <ListItem style={{ marginTop: 20 }} key={i} bullet>
               <Text fontSize="sm" fontWeight="500" bold mt="-1">
-                21 Aug 2023
+              {moment(item?.date).format("DD MMMM YYYY")}
               </Text>
               <Text
                 _dark={{
@@ -194,12 +196,7 @@ export const MyProjectPage = () => {
                 color="coolGray.800"
                 style={{ marginRight: 20 }}
               >
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic
+               {item?.comment}
               </Text>
             </ListItem>
           ))}

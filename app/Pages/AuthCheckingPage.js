@@ -17,7 +17,7 @@ export const AuthCheckingPage = () => {
           return
         }
         if (user?.type === userType.coordinator) {
-          navigation.navigate('ProjectsPageForCoordinator')
+          navigation.navigate('Projects')
           return
         }
         navigation.navigate('Projects')

@@ -47,7 +47,7 @@ export const Tabs = ({ activeTab }) => {
         onPress={() => handleTabPress("Settings")}
       >
         <MaterialIcons
-          name="settings"
+          name="person"
           size={24}
           color={activeTab === "Settings" ? primaryColor : "#555"}
         />
@@ -59,10 +59,20 @@ export const Tabs = ({ activeTab }) => {
     return (<View style={styles.bottomNavigation}>
         <TouchableOpacity
         style={styles.tab}
-        onPress={() => handleTabPress("ProjectsPageForCoordinator")}
+        onPress={() => handleTabPress("Projects")}
       >
         <MaterialIcons
           name="home"
+          size={24}
+          color={activeTab === "Projects" ? primaryColor : "#555"}
+        />
+      </TouchableOpacity>
+        <TouchableOpacity
+        style={styles.tab}
+        onPress={() => handleTabPress("ProjectsPageForCoordinator")}
+      >
+        <MaterialIcons
+          name="file-copy"
           size={24}
           color={activeTab === "ProjectsPageForCoordinator" ? primaryColor : "#555"}
         />
@@ -72,7 +82,7 @@ export const Tabs = ({ activeTab }) => {
         onPress={() => handleTabPress("Settings")}
       >
         <MaterialIcons
-          name="settings"
+          name="person"
           size={24}
           color={activeTab === "Settings" ? primaryColor : "#555"}
         />
@@ -99,7 +109,7 @@ export const Tabs = ({ activeTab }) => {
         onPress={() => handleTabPress("Settings")}
       >
         <MaterialIcons
-          name="settings"
+          name="person"
           size={24}
           color={activeTab === "Settings" ? primaryColor : "#555"}
         />

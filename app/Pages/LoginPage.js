@@ -12,10 +12,17 @@ import HomeContainer from "../Containers/HomeContainer";
 const LoginPage = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+  // coordiator
   // const [email, setEmail] = useState('ameen@coord.smiu.com');
   // const [password, setPassword] = useState('P@ssword06AM!');
+  // student
+  // const [email, setEmail] = useState('ali@stu.smiu.com');
+  // const [password, setPassword] = useState('P@ssword03AM!');
+  // supervisor
+  const [email, setEmail] = useState('ameen@sup.smiu.com');
+  const [password, setPassword] = useState('P@ssword07AM!');
 
   const onLogin = async () => { 
     if (trimCheck(email) || trimCheck(password)) {

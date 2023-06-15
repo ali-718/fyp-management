@@ -16,6 +16,7 @@ import { ToastError, ToastSuccess } from "../Utilities/Toast";
 import { useSupervisorGet } from "../hooks/supervisorHook";
 import { useStudentGet } from "../hooks/studenkHook";
 import { createProject } from "../hooks/projectHook";
+import { errorModifier } from "../hooks/AuthHook";
 
 export const AddProjectsPage = () => {
   const navigation = useNavigation();
@@ -115,8 +116,9 @@ export const AddProjectsPage = () => {
 
     createProject(data).then(() => {
         ToastSuccess("Projected created successfully")
+        navigation.goBack()
     }).catch(e => {
-        ToastError('Some error occoured')
+        ToastError(errorModifier(e))
     })
 
     // AsyncStorage.setItem("projects", JSON.stringify(data)).then(() => {

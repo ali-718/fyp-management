@@ -46,12 +46,8 @@ export const ProjectsPageForCoordinator = () => {
     navigation.navigate("projectDetail", item);
   };
 
-  if (isLoading) {
-    return <FullPageLoading />
-  }
-
   return (
-    <HomeContainer activeTab='ProjectsPageForCoordinator' heading={"Groups"}>
+    <HomeContainer isLoading={isLoading} activeTab='ProjectsPageForCoordinator' heading={"Unapproved Projects"}>
       <View style={{ flex: 1, width: "100%", marginTop: 20 }}>
         <View style={{ width: "100%", flex: 1 }}>
           <FlatList

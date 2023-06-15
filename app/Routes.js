@@ -2,7 +2,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginPage from "./Pages/LoginPage";
-import ProjectsPage from "./Pages/ProjectsPage";
+import { ProjectsPage } from "./Pages/ProjectsPage";
 import { AddProjectsPage } from "./Pages/AddProjectsPage";
 import { PorjectDetailPage } from "./Pages/PorjectDetailPage";
 import { SupervisorsListPage } from "./Pages/SupervisorsListPage";
@@ -24,8 +24,8 @@ export const Routes = () => {
         defaultScreenOptions={{ animation: "slide_from_bottom" }}
         initialRouteName="AuthChecking"
       >
-        <Stack.Screen name="Settings" component={SettingsPage} />
-        <Stack.Screen name="ProjectsPageForCoordinator" component={ProjectsPageForCoordinator} />
+        <Stack.Screen options={{animation: 'none'}} name="Settings" component={SettingsPage} />
+        <Stack.Screen options={{animation: 'none'}} name="ProjectsPageForCoordinator" component={ProjectsPageForCoordinator} />
         <Stack.Screen name="MyProject" component={MyProjectPage} />
         <Stack.Screen name="AuthChecking" component={AuthCheckingPage} />
         <Stack.Screen name="Login" component={LoginPage} />

@@ -20,7 +20,7 @@ import {
   HamburgerIcon,
   TextArea,
 } from "native-base";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { ListItem } from "../Components/ListItem";
 import { Button } from "../Components/Button";
 import { Modal } from "react-native-paper";
@@ -31,7 +31,8 @@ import { ToastSuccess } from "../Utilities/Toast";
 import { userType } from "../Utilities/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SupervisorCard } from "../Components/SupervisorCard";
-import { updateProject } from "../hooks/projectHook";
+import { updateProject, useFetchReportByProject } from "../hooks/projectHook";
+import { useFetchUser } from "../hooks/AuthHook";
 
 export const PorjectDetailPage = () => {
   const {
@@ -39,8 +40,12 @@ export const PorjectDetailPage = () => {
     projectMembers: students = [],
     description = "",
     supervisor = {},
-    _id = ''
+    _id = '',
+    isApprovedByCoordinator = true
   } = useRoute().params;
+  const [user, setUser] = useState({});
+  const {reports} = useFetchReportByProject(_id);
+  const navigation = useNavigation();
   const [isModal, setIsModal] = useState(false);
   const [meetingModal, setMeetingModal] = useState(false);
   const [supervisorModal, setSupervisorModal] = useState(false);
@@ -70,14 +75,18 @@ export const PorjectDetailPage = () => {
 
   useEffect(() => {
     fetchSupervisors();
+      (async () => {
+        const user = await useFetchUser();
+        setUser(user)
+      })()
   }, []);
 
   const onUpdate = async (type) => {
     if (type === 'drop') {
-      updateProject({ _id, supervisor: {}, isApprovedByCoordinator: false})
+      updateProject({ _id, supervisor: {}, isApprovedByCoordinator: false}, navigation)
       return
     }
-    updateProject({ _id, isApprovedByCoordinator: true})
+    updateProject({ _id, isApprovedByCoordinator: true}, navigation)
   }
 
   const rightSide = (
@@ -96,7 +105,8 @@ export const PorjectDetailPage = () => {
   );
 
   return (
-    <HomeContainer rightSide={rightSide} back heading={"Project detail"}>
+    <>
+    <HomeContainer rightSide={userType.supervisor === user.type && rightSide} back noTab heading={"Project detail"}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Heading mt="5" size="md">
           {name}
@@ -157,10 +167,10 @@ export const PorjectDetailPage = () => {
         </View>
 
         <View style={{ width: "100%", paddingBottom: 20 }}>
-          {[1, 2, 3].map((item, i) => (
+        {reports.map((item, i) => (
             <ListItem style={{ marginTop: 20 }} key={i} bullet>
               <Text fontSize="sm" fontWeight="500" bold mt="-1">
-                21 Aug 2023
+              {moment(item?.date).format("DD MMMM YYYY")}
               </Text>
               <Text
                 _dark={{
@@ -169,12 +179,7 @@ export const PorjectDetailPage = () => {
                 color="coolGray.800"
                 style={{ marginRight: 20 }}
               >
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic
+               {item?.comment}
               </Text>
             </ListItem>
           ))}
@@ -320,5 +325,19 @@ export const PorjectDetailPage = () => {
         </View>
       </Modal>
     </HomeContainer>
+    {!isApprovedByCoordinator && 
+      <View style={{padding: 10, backgroundColor: 'white', borderTopWidth: 1, borderTopColor: 'lightgray'}}>
+         <Button
+        text={'APPROVE'} bgColor={primaryColor} textColor={'#fff'}
+        onPress={() => onUpdate('')}
+        />
+        <View style={{marginTop: 10}} />
+         <Button
+        text={'REJECT'} bgColor={primaryRedColor} textColor={'#fff'}
+        onPress={() => onUpdate("drop")}
+        />
+      </View>
+      }
+    </>
   );
 };
