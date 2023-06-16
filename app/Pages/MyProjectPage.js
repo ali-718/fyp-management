@@ -120,7 +120,7 @@ export const MyProjectPage = () => {
   return (
     <HomeContainer
       activeTab={"MyProject"}
-      rightSide={!isLoading && rightSide}
+      // rightSide={!isLoading && rightSide}
       heading={"My Project"}
       isLoading={isLoading}
     >

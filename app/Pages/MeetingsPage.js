@@ -71,7 +71,7 @@ export const MeetingsPage = () => {
               color="coolGray.800"
               style={{ marginRight: 20 }}
             >
-             You have upcoming meeting with <Text style={{fontWeight: 'bold', color: 'black'}}>{'ali'}</Text> for the project <Text style={{fontWeight: 'bold', color: 'black'}}>{"Test"}</Text> 
+             You have upcoming meeting with <Text style={{fontWeight: 'bold', color: 'black'}}>{item?.project?.teamLead?.name}</Text> for the project <Text style={{fontWeight: 'bold', color: 'black'}}>{item?.project?.title}</Text> 
             </Text>
           </ListItem>
             }

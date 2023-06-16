@@ -37,7 +37,7 @@ import {
   updateProject,
   useFetchReportByProject,
 } from "../hooks/projectHook";
-import { useFetchUser } from "../hooks/AuthHook";
+import { useFetchUser, useFetchUserFromLocalStorage } from "../hooks/AuthHook";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 export const PorjectDetailPage = () => {
@@ -61,6 +61,17 @@ export const PorjectDetailPage = () => {
   const [time, setTime] = useState(new Date());
   const [supervisorsList, setSupervisorsList] = useState([]);
   const [selectedSupervisor, setSelectedSupervisor] = useState("");
+  const [showPicker, setShowPicker] = useState(false);
+
+
+  const showTimePicker = () => {
+    setShowPicker(true);
+  };
+
+  const hideTimePicker = () => {
+    setShowPicker(false);
+  };
+
   const openModal = () => setIsModal(true);
   const closeModal = () => setIsModal(false);
 
@@ -114,7 +125,7 @@ export const PorjectDetailPage = () => {
   useEffect(() => {
     fetchSupervisors();
     (async () => {
-      const user = await useFetchUser();
+      const user = await useFetchUserFromLocalStorage();
       setUser(user);
     })();
   }, []);
@@ -422,14 +433,25 @@ export const PorjectDetailPage = () => {
               }}
             />
             <View style={{ marginTop: 10 }} />
+            {showPicker ? 
             <RNDateTimePicker
+              // display='spinner'
               mode="time"
               onChange={(e, time) => {
+                 if (time == undefined) return;
                 console.log({ time: moment(time).format("hh:mm a") });
                 setTime(time);
+                hideTimePicker()
               }}
               value={time}
-            />
+              positiveButton={{label: 'OK', textColor: 'green'}}         
+            /> : <Button
+            text={time ? moment(time).format("hh:mm a") : "Select time"}
+            // bgColor={primaryColor}
+            type='simple'
+            textColor={primaryGreenColor}
+            onPress={showTimePicker}
+          />}
 
             <View style={{ marginTop: 20 }} />
             <Button
