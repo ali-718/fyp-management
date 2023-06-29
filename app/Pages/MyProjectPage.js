@@ -1,5 +1,5 @@
 import { ScrollView, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import HomeContainer from "../Containers/HomeContainer";
 import {
   primaryColor,
@@ -20,7 +20,7 @@ import {
   HamburgerIcon,
   TextArea,
 } from "native-base";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { ListItem } from "../Components/ListItem";
 import { Button } from "../Components/Button";
 import { Modal } from "react-native-paper";
@@ -73,15 +73,22 @@ export const MyProjectPage = () => {
     });
   };
 
-  useEffect(() => {
-    fetchSupervisors();
-    (async () => {
-      const user = await useFetchUser();
-      if (user?._id) {
-        setUser(user);
-      }
-    })();
-  }, []);
+  useFocusEffect(useCallback(
+    () => {
+      setUser({})
+      console.log('Yes', user)
+      fetchUser();
+      fetchSupervisors();
+    },
+    [navigation],
+  ));
+
+  const fetchUser = async () => {
+    const user = await useFetchUser();
+    if (user?._id) {
+      setUser(user);
+    }
+  }
 
   const rightSide = (
     <Menu
@@ -97,7 +104,7 @@ export const MyProjectPage = () => {
     </Menu>
   );
 
-  if (!user?.project && !isLoading) {
+  if (!user?.project) {
     return (
       <HomeContainer
       activeTab={"MyProject"}

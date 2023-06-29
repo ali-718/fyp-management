@@ -8,6 +8,7 @@ import moment from "moment"
 export const createProject = async (data) => {
     try {
         const res = await client.post(apiURL('project/create'), data)
+        console.log({res: res.data, project: data})
         return res   
     } catch (error) {
         return error
@@ -50,7 +51,11 @@ export const useFetchProjectById = (id) => {
             setIsLoading(false)
         }).catch(e => {
             ToastError(errorModifier(e))
+            setIsLoading(false)
         })
+    }
+    else {
+        setIsLoading(true);
     }
     }, [id])
 

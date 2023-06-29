@@ -110,7 +110,7 @@ export const AddProjectsPage = () => {
             text2: "Data updated successfully",
             position: "top",
           });
-          navigation.navigate("Projects");
+          navigation.goBack();
         });
       }
       return;

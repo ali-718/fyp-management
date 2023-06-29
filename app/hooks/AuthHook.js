@@ -28,6 +28,7 @@ export const useFetchUser = async () => {
     const finalData = JSON.parse(data)
     try {
     const user = await client.get(`user/get/${finalData?._id}`)
+    console.log({user: user.data?.data})
     return user.data?.data;
     }
     catch (e) {
