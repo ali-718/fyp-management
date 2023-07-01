@@ -38,6 +38,7 @@ import { FullPageLoading } from "../Components/FullPageLoading";
 export const MyProjectPage = () => {
   const navigation = useNavigation();
   const [user, setUser] = useState({});
+  const [userLoading, setUserLoading] = useState(true);
   const { project = {}, isLoading } = useFetchProjectById(user?.project);
   const {reports} = useFetchReportByProject(user?.project);
   const {
@@ -75,8 +76,8 @@ export const MyProjectPage = () => {
 
   useFocusEffect(useCallback(
     () => {
+      setUserLoading(true)
       setUser({})
-      console.log('Yes', user)
       fetchUser();
       fetchSupervisors();
     },
@@ -84,10 +85,12 @@ export const MyProjectPage = () => {
   ));
 
   const fetchUser = async () => {
+    setUserLoading(true);
     const user = await useFetchUser();
     if (user?._id) {
       setUser(user);
     }
+    setUserLoading(false);
   }
 
   const rightSide = (
@@ -129,7 +132,7 @@ export const MyProjectPage = () => {
       activeTab={"MyProject"}
       // rightSide={!isLoading && rightSide}
       heading={"My Project"}
-      isLoading={isLoading}
+      isLoading={isLoading || userLoading}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         <Heading mt="5" size="md">

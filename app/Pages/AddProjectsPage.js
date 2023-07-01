@@ -21,6 +21,7 @@ import { errorModifier, useFetchUserFromLocalStorage } from "../hooks/AuthHook";
 export const AddProjectsPage = () => {
   const navigation = useNavigation();
   const [user, setUser] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const { params = {} } = useRoute();
   const { data: paramsData = {} } = params;
   const [name, setName] = useState("");
@@ -116,6 +117,8 @@ export const AddProjectsPage = () => {
       return;
     }
 
+    setIsLoading(true)
+
     const data = {
       title: name,
       description,
@@ -127,8 +130,10 @@ export const AddProjectsPage = () => {
     createProject(data).then(() => {
         ToastSuccess("Projected created successfully")
         navigation.goBack()
+        setIsLoading(false)
     }).catch(e => {
         ToastError(errorModifier(e))
+        setIsLoading(false)
     })
 
     // AsyncStorage.setItem("projects", JSON.stringify(data)).then(() => {
@@ -137,7 +142,7 @@ export const AddProjectsPage = () => {
   };
 
   return (
-    <HomeContainer back heading={isEdit ? "Edit a project" : "Add a project"}>
+    <HomeContainer isLoading={isLoading} back heading={isEdit ? "Edit a project" : "Add a project"}>
       <View style={{ width: "100%", alignItems: "center" }}>
         <Image
           style={styles.logo}

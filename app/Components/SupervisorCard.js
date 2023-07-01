@@ -44,7 +44,7 @@ export const SupervisorCard = ({
                 );
               }}
             >
-              <Menu.Item onPress={onUpdate}>update</Menu.Item>
+              {/* <Menu.Item onPress={onUpdate}>update</Menu.Item> */}
               <Menu.Item onPress={onDelete}>delete</Menu.Item>
             </Menu>
           )}

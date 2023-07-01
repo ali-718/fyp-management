@@ -4,7 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { primaryColor, primaryGreenColor, primaryRedColor } from "./Utilities/Colors";
 import { useNavigation } from "@react-navigation/native";
 import { userType } from "./Utilities/config";
-import { useFetchUser } from "./hooks/AuthHook";
+import { useFetchUser, useFetchUserFromLocalStorage } from "./hooks/AuthHook";
 
 export const Tabs = ({ activeTab }) => {
   const [user, setUser] = useState({});
@@ -15,7 +15,7 @@ export const Tabs = ({ activeTab }) => {
 
   useEffect(() => {
     (async () => {
-      const user = await useFetchUser();
+      const user = await useFetchUserFromLocalStorage();
       setUser(user)
     })()
   }, [])
@@ -85,6 +85,16 @@ export const Tabs = ({ activeTab }) => {
           name="file-copy"
           size={24}
           color={activeTab === "ProjectsPageForCoordinator" ? primaryColor : "#555"}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.tab}
+        onPress={() => handleTabPress("supervisor")}
+      >
+        <MaterialIcons
+          name="supervisor-account"
+          size={24}
+          color={activeTab === "supervisor" ? primaryColor : "#555"}
         />
       </TouchableOpacity>
       <TouchableOpacity

@@ -7,6 +7,7 @@ import { primaryColor } from "../Utilities/Colors";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { FAB } from "react-native-paper";
 import { SupervisorCard } from "../Components/SupervisorCard";
+import { useSupervisorGet } from "../hooks/supervisorHook";
 
 const renderItem = ({ item }, onUpdate, onDelete) => (
   <View style={{ marginTop: 10 }}>
@@ -15,6 +16,7 @@ const renderItem = ({ item }, onUpdate, onDelete) => (
       email={item?.email}
       onUpdate={() => onUpdate(item)}
       onDelete={() => onDelete(item?.id)}
+      noOptions
     />
   </View>
 );
@@ -35,20 +37,7 @@ const _emptyComponent = () => (
 
 export const SupervisorsListPage = () => {
   const navigation = useNavigation();
-  const [data, setData] = useState([]);
-
-  useFocusEffect(() => {
-    const storedData = AsyncStorage.getItem("supervisor");
-    storedData.then((res) => {
-      if (res !== null) {
-        setData(JSON.parse(res));
-      }
-    });
-  });
-
-  const onUpdate = (data) => {
-    navigation.navigate("addSupervisor", { data });
-  };
+  const {data, isLoading} = useSupervisorGet(true, Math.random());
 
   const onDelete = (id) => {
     Alert.alert("Warning!", "are you sure you want to delete ?", [
@@ -73,14 +62,14 @@ export const SupervisorsListPage = () => {
   };
 
   return (
-    <HomeContainer activeTab='supervisor' heading={"Supervisors"}>
+    <HomeContainer isLoading={isLoading} activeTab='supervisor' heading={"Supervisors"}>
       <View style={{ flex: 1, width: "100%", marginTop: 20 }}>
         <View style={{ width: "100%", flex: 1 }}>
           <FlatList
             key={(item, i) => `${i}`}
             data={data}
             renderItem={(item) =>
-              renderItem(item, onUpdate, onDelete)
+              renderItem(item, () => null, onDelete)
             }
             style={{ flex: 1, width: "100%" }}
             contentContainerStyle={{ paddingBottom: 10 }}

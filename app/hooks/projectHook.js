@@ -6,12 +6,14 @@ import { errorModifier } from "./AuthHook"
 import moment from "moment"
 
 export const createProject = async (data) => {
+    console.log({projectData: data})
     try {
         const res = await client.post(apiURL('project/create'), data)
-        console.log({res: res.data, project: data})
-        return res   
+        console.log({rest: res.data, projectData: data})
+        return  Promise.resolve(res)   
     } catch (error) {
-        return error
+        console.log({err: errorModifier(error)})
+        return Promise.reject(error)
     }
 }
 

@@ -7,10 +7,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { ToastError, ToastSuccess } from "../Utilities/Toast";
 import uuid from "react-native-uuid";
+import { createSupervisor } from "../hooks/supervisorHook";
 
 export const AddSupervisorsPage = () => {
   const navigation = useNavigation();
   const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [isEdit, setisEdit] = useState(false);
   const { params = {} } = useRoute();
@@ -25,53 +27,22 @@ export const AddSupervisorsPage = () => {
   }, [paramsData]);
 
   const AddSupervisor = async () => {
-    const storedData = await AsyncStorage.getItem("supervisor");
     if (name.trim() === "" || email.trim() === "") {
       ToastError("Kindly fill all fields", "bottom");
       return;
     }
-
-    if (isEdit) {
-      const data = JSON.parse(storedData);
-      const Index = data?.findIndex((item) => item.id === paramsData?.id);
-      if (Index > -1) {
-        data[Index] = {
-          id: paramsData?.id,
-          name,
-          email,
-        };
-
-        AsyncStorage.setItem("supervisor", JSON.stringify(data)).then(() => {
-          ToastSuccess("Data updated successfully", "top");
-          navigation.navigate("supervisor");
-        });
-      }
-      return;
+    setIsLoading(true);
+    const data = {
+      name,
+      email
     }
-
-    if (storedData !== null) {
-      const data = JSON.parse(storedData);
-      data.push({
-        id: uuid.v4(),
-        name,
-        email,
-      });
-      AsyncStorage.setItem("supervisor", JSON.stringify(data)).then(() => {
-        navigation.navigate("supervisor");
-      });
-      return;
-    }
-
-    const data = [
-      {
-        id: uuid.v4(),
-        name,
-        email,
-      },
-    ];
-    AsyncStorage.setItem("supervisor", JSON.stringify(data)).then(() => {
-      navigation.navigate("supervisor");
-    });
+    createSupervisor(data).then(() => {
+      ToastSuccess("Supervisor created successfully")
+      navigation.goBack();
+      setIsLoading(false);
+    }).catch(() => {
+      setIsLoading(false);
+    })
   };
 
   return (
@@ -79,6 +50,7 @@ export const AddSupervisorsPage = () => {
       noTab
       back
       heading={isEdit ? "Edit a supervisor" : "Add a supervisor"}
+      isLoading={isLoading}
     >
       <View style={{ width: "100%", alignItems: "center" }}>
         <Image
