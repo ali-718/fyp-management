@@ -13,6 +13,8 @@ import { ProjectsPageForCoordinator } from "./Pages/ProjectsPageForCoordinator";
 import { SettingsPage } from "./Pages/SettingsPage";
 import { NotificationsPage } from "./Pages/NotificationsPage";
 import { MeetingsPage } from "./Pages/MeetingsPage";
+import { ProjectsIdeaPage } from "./Pages/ProjectsIdeaPage";
+import { AddProjectIdeaPage } from "./Pages/AddProjectIdeaPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +31,8 @@ export const Routes = () => {
         <Stack.Screen options={{animation: 'none'}} name="Notifications" component={NotificationsPage} />
         <Stack.Screen options={{animation: 'none'}} name="Settings" component={SettingsPage} />
         <Stack.Screen options={{animation: 'none'}} name="ProjectsPageForCoordinator" component={ProjectsPageForCoordinator} />
+        <Stack.Screen name="AddProjectIdeas" component={AddProjectIdeaPage} />
+        <Stack.Screen name="ProjectIdeas" component={ProjectsIdeaPage} />
         <Stack.Screen name="Meetings" component={MeetingsPage} />
         <Stack.Screen name="MyProject" component={MyProjectPage} />
         <Stack.Screen name="AuthChecking" component={AuthCheckingPage} />

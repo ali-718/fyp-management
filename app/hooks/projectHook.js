@@ -17,6 +17,18 @@ export const createProject = async (data) => {
     }
 }
 
+export const createProjectIdea = async (data) => {
+    console.log({projectData: data})
+    try {
+        const res = await client.post('project/supervisor/idea/create', data)
+        console.log({rest: res.data, projectData: data})
+        return Promise.resolve(res)   
+    } catch (error) {
+        console.log({err: errorModifier(error)})
+        return Promise.reject(error)
+    }
+}
+
 export const createMeeting = async (data) => {
     try {
         console.log({data})
@@ -94,6 +106,25 @@ export const useFetchAllProjects = () => {
             ToastError(errorModifier(e))
         })
     }, [])
+
+    return {projects, isLoading};
+}
+
+export const useFetchAllProjectIdeas = (id, rand) => {
+    const [projects, setProject] = useState([]);
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        if (!id) return;
+        client.get(`project/supervisor/idea/get/${id}`).then(({data}) => {
+            console.log({projectIdeas: data.data})
+            setProject(data.data)
+            setIsLoading(false)
+        }).catch(e => {
+            ToastError(errorModifier(e))
+            setIsLoading(false)
+        })
+    }, [id, rand])
 
     return {projects, isLoading};
 }

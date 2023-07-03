@@ -8,17 +8,20 @@ import { Button } from "../Components/Button";
 import { primaryColor } from "../Utilities/Colors";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { FAB } from "react-native-paper";
-import { useFetchAllMeetings, useFetchAllProjects, useFetchNotifications, useFetchUnapprovedProject } from "../hooks/projectHook";
+import {
+  useFetchAllProjectIdeas,
+  useFetchAllProjects,
+  useFetchUnapprovedProject,
+} from "../hooks/projectHook";
 import { FullPageLoading } from "../Components/FullPageLoading";
 import { useFetchUserFromLocalStorage } from "../hooks/AuthHook";
-import { ListItem } from "../Components/ListItem";
 
 const renderItem = ({ item }, onPress) => (
   <View style={{ marginTop: 10 }}>
     <ProjectCard
       heading={item?.title}
-      supervisor={item?.supervisor?.name}
-      students={item?.projectMembers}
+      // supervisor={item?.supervisor?.name}
+      // students={item?.projectMembers}
       description={item?.description}
       onPress={() => onPress(item)}
     />
@@ -35,52 +38,59 @@ const _emptyComponent = () => (
       paddingTop: 50,
     }}
   >
-    <Text>Sorry there are no Meetings available</Text>
+    <Text>Sorry there are no ideas!</Text>
   </View>
 );
 
-export const MeetingsPage = () => {
+export const ProjectsIdeaPage = () => {
   const [user, setUser] = useState({});
-  const {isLoading, meetings = []} = useFetchAllMeetings(user?._id)
+  const [rand, setRand] = useState('');
+  const { isLoading, projects = [] } = useFetchAllProjectIdeas(user?._id, rand);
+  const navigation = useNavigation();
 
-  useEffect(() => {
+  const onPressProject = () => null;
+
+  useFocusEffect(useCallback(() => {
     (async () => {
+      setRand(Math.random())
       const user = await useFetchUserFromLocalStorage();
       if (user?._id) {
         setUser(user);
       }
     })();
-  }, []);
+  }, [navigation]));
 
   return (
-    <HomeContainer back isLoading={isLoading} noTab heading={"Meetings"}>
+    <HomeContainer
+      isLoading={isLoading}
+      noTab
+      back
+      heading={"Project Ideas"}
+    >
       <View style={{ flex: 1, width: "100%", marginTop: 20 }}>
         <View style={{ width: "100%", flex: 1 }}>
           <FlatList
             key={(item, i) => `${i}`}
-            data={meetings}
-            renderItem={({item}, i) =>
-            <ListItem style={{ marginTop: 20 }} key={i} bullet>
-            <Text fontSize="sm" fontWeight="500" bold mt="-1">
-            {item?.day} - {item?.time}
-            </Text>
-            <Text
-              _dark={{
-                color: "warmGray.50",
-              }}
-              color="coolGray.800"
-              style={{ marginRight: 20 }}
-            >
-             You have upcoming meeting with <Text style={{fontWeight: 'bold', color: 'black'}}>{item?.project?.teamLead?.name}</Text> for the project <Text style={{fontWeight: 'bold', color: 'black'}}>{item?.project?.title}</Text> 
-            </Text>
-          </ListItem>
-            }
+            data={projects}
+            renderItem={(item) => renderItem(item, onPressProject)}
             style={{ flex: 1, width: "100%" }}
             contentContainerStyle={{ paddingBottom: 10 }}
             ListEmptyComponent={_emptyComponent}
           />
         </View>
       </View>
+      <FAB
+        icon="plus"
+        style={{
+          position: "absolute",
+          margin: 16,
+          right: 0,
+          bottom: 0,
+          backgroundColor: primaryColor,
+        }}
+        color="white"
+        onPress={() => navigation.navigate("AddProjectIdeas")}
+      />
     </HomeContainer>
   );
 };

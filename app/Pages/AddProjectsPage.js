@@ -128,7 +128,7 @@ export const AddProjectsPage = () => {
     };
 
     createProject(data).then(() => {
-        ToastSuccess("Projected created successfully")
+        ToastSuccess("Project created successfully")
         navigation.goBack()
         setIsLoading(false)
     }).catch(e => {

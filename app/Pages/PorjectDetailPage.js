@@ -153,6 +153,7 @@ export const PorjectDetailPage = () => {
     >
       <Menu.Item onPress={openReportModal}>add report</Menu.Item>
       <Menu.Item onPress={openMeetingModal}>schedule a meeting</Menu.Item>
+      {user.type == userType.supervisor && <Menu.Item onPress={() => null}>drop project</Menu.Item>}
     </Menu>
   );
 
