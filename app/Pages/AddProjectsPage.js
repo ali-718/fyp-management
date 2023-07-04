@@ -142,7 +142,7 @@ export const AddProjectsPage = () => {
   };
 
   return (
-    <HomeContainer isLoading={isLoading} back heading={isEdit ? "Edit a project" : "Add a project"}>
+    <HomeContainer noTab isLoading={isLoading} back heading={isEdit ? "Edit a project" : "Add a project"}>
       <View style={{ width: "100%", alignItems: "center" }}>
         <Image
           style={styles.logo}

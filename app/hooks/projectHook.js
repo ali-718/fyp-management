@@ -193,10 +193,10 @@ export const useFetchNotifications = (id) => {
     return {notifications: reports, isLoading, refetch};
 }
 
-export const createReportByProject = async (id, comment) => {
+export const createReportByProject = async (id, comment, students) => {
     try {
-        console.log({request: {id,comment}})
-        const res = await client.post(`report/create`, {comment, project: id, date: moment().toString()})
+        console.log({request: {id,comment, students}})
+        const res = await client.post(`report/create`, {comment, project: id, date: moment().toString(), attendees: students})
         console.log({res})
         ToastSuccess("Report updated successfully")
     } catch (e) {

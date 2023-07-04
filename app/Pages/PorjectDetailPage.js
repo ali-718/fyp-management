@@ -27,7 +27,7 @@ import { Modal } from "react-native-paper";
 import { Calendar } from "react-native-calendars";
 import Toast from "react-native-toast-message";
 import moment from "moment";
-import { ToastSuccess } from "../Utilities/Toast";
+import { ToastError, ToastSuccess } from "../Utilities/Toast";
 import { userType } from "../Utilities/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SupervisorCard } from "../Components/SupervisorCard";
@@ -62,7 +62,19 @@ export const PorjectDetailPage = () => {
   const [supervisorsList, setSupervisorsList] = useState([]);
   const [selectedSupervisor, setSelectedSupervisor] = useState("");
   const [showPicker, setShowPicker] = useState(false);
+  const [selectedStudents, setselectedStudents] = useState([]);
 
+  const onSelectStudents = (student) => {
+    const check =
+      selectedStudents.filter((data) => data._id === student._id).length > 0;
+    if (check) {
+      setselectedStudents(
+        selectedStudents.filter((item) => item._id !== student._id)
+      );
+      return;
+    }
+    setselectedStudents([...selectedStudents, student]);
+  };
 
   const showTimePicker = () => {
     setShowPicker(true);
@@ -82,6 +94,7 @@ export const PorjectDetailPage = () => {
   const closeReportModal = () => {
     setReportModal(false);
     setComment("");
+    setselectedStudents([])
   };
 
   const openSupervisorModal = () => setSupervisorModal(true);
@@ -91,7 +104,11 @@ export const PorjectDetailPage = () => {
   };
 
   const submitReport = () => {
-    createReportByProject(_id, comment).then((res) => {
+    if (comment.trim() === "" || selectedStudents.length == 0) {
+      ToastError("Kindly select atleast one attendee and write a comment")
+      return
+    }
+    createReportByProject(_id, comment, selectedStudents.map(item => item?._id)).then((res) => {
       closeReportModal();
       refetch();
     });
@@ -378,6 +395,32 @@ export const PorjectDetailPage = () => {
               placeholder="comment"
               h={20}
             />
+            <View style={{marginTop: 10}}>
+              <Text>Attendees</Text>
+              <ScrollView style={{ width: "100%", maxHeight: 250 }}>
+            {students.map((item, i) => (
+              <TouchableOpacity
+                key={i}
+                style={{
+                  opacity:
+                    selectedStudents.filter((data) => data._id === item._id)
+                      .length > 0
+                      ? 0.5
+                      : 1,
+                  marginTop: 10,
+                  backgroundColor:
+                    selectedStudents.filter((data) => data._id === item._id)
+                      .length > 0
+                      ? "gainsboro"
+                      : "white",
+                }}
+                onPress={() => onSelectStudents(item)}
+              >
+                <SupervisorCard name={item?.name} email={item?._id} noOptions />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+            </View>
             <View style={{ marginTop: 10, flexDirection: "row" }}>
               <View style={{ width: "50%" }}>
                 <Button
