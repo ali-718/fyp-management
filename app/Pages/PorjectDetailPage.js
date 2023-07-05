@@ -63,6 +63,7 @@ export const PorjectDetailPage = () => {
   const [selectedSupervisor, setSelectedSupervisor] = useState("");
   const [showPicker, setShowPicker] = useState(false);
   const [selectedStudents, setselectedStudents] = useState([]);
+  const [reportLoading, setReportLoading] = useState(false)
 
   const onSelectStudents = (student) => {
     const check =
@@ -108,10 +109,14 @@ export const PorjectDetailPage = () => {
       ToastError("Kindly select atleast one attendee and write a comment")
       return
     }
+    setReportLoading(true)
     createReportByProject(_id, comment, selectedStudents.map(item => item?._id)).then((res) => {
       closeReportModal();
       refetch();
-    });
+      setReportLoading(false)
+    }).catch(() => {
+      setReportLoading(false)
+    })
   };
 
   const scheduleMeeting = () => {
@@ -181,6 +186,7 @@ export const PorjectDetailPage = () => {
         back
         noTab
         heading={"Project detail"}
+        isLoading={reportLoading}
       >
         <ScrollView showsVerticalScrollIndicator={false}>
           <Heading mt="5" size="md">
@@ -259,6 +265,15 @@ export const PorjectDetailPage = () => {
                   style={{ marginRight: 20 }}
                 >
                   {item?.comment}
+                </Text>
+                <Text
+                  _dark={{
+                    color: "warmGray.50",
+                  }}
+                  color="coolGray.800"
+                  style={{ marginRight: 20 }}
+                >
+                  <Text style={{fontWeight: 'bold'}}>attendees:</Text> {item?.attendees?.map(data => data?.name || "").join(", ")}
                 </Text>
               </ListItem>
             ))}
@@ -507,7 +522,7 @@ export const PorjectDetailPage = () => {
           </View>
         </Modal>
       </HomeContainer>
-      {!isApprovedByCoordinator && (
+      {!isApprovedByCoordinator && user.type === userType.coordinator && (
         <View
           style={{
             padding: 10,

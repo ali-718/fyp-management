@@ -124,7 +124,7 @@ export const AddProjectsPage = () => {
       description,
       teamLeadId: user?._id,
       supervisorId: supervisor?._id,
-      projectMembers: selectedStudents.map(item => item?._id),
+      projectMembers: selectedStudents.map(item => item?._id).concat(user?._id),
     };
 
     createProject(data).then(() => {
