@@ -107,7 +107,7 @@ export const MyProjectPage = () => {
     </Menu>
   );
 
-  if (!user?.project) {
+  if (!userLoading && !user?.project) {
     return (
       <HomeContainer
       activeTab={"MyProject"}

@@ -18,11 +18,11 @@ const LoginPage = () => {
   // const [email, setEmail] = useState('ameen@coord.smiu.com');
   // const [password, setPassword] = useState('P@ssword06AM!');
   // student
-  // const [email, setEmail] = useState('basir@stu.smiu.com');
-  // const [password, setPassword] = useState('smiufyp2023');
+  const [email, setEmail] = useState('basir@stu.smiu.com');
+  const [password, setPassword] = useState('smiufyp2023');
   // supervisor
-  const [email, setEmail] = useState('ameen@sup.smiu.com');
-  const [password, setPassword] = useState('P@ssword07AM!');
+  // const [email, setEmail] = useState('ameen@sup.smiu.com');
+  // const [password, setPassword] = useState('P@ssword07AM!');
 
   const onLogin = async () => { 
     if (trimCheck(email) || trimCheck(password)) {
