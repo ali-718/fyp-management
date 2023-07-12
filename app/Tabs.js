@@ -125,12 +125,12 @@ export const Tabs = ({ activeTab }) => {
     <View style={styles.bottomNavigation}>
       <TouchableOpacity
         style={styles.tab}
-        onPress={() => handleTabPress("Projects")}
+        onPress={() => handleTabPress("ProjectsPageForSupervisor")}
       >
         <MaterialIcons
           name="home"
           size={24}
-          color={activeTab === "Projects" ? primaryColor : "#555"}
+          color={activeTab === "ProjectsPageForSupervisor" ? primaryColor : "#555"}
         />
       </TouchableOpacity>
 

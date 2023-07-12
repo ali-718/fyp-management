@@ -10,9 +10,11 @@ import allNav, { useFocusEffect, useNavigation } from "@react-navigation/native"
 import { FAB } from "react-native-paper";
 import {
   useFetchAllProjects,
+  useFetchProjectsBySupervisorId,
   useFetchUnapprovedProject,
 } from "../hooks/projectHook";
 import { FullPageLoading } from "../Components/FullPageLoading";
+import { useFetchUser, useFetchUserFromLocalStorage } from "../hooks/AuthHook";
 
 const renderItem = ({ item }, onPress) => (
   <View style={{ marginTop: 10 }}>
@@ -40,15 +42,27 @@ const _emptyComponent = () => (
   </View>
 );
 
-export const ProjectsPage = () => {
-  const { isLoading, projects = [], fetch } = useFetchAllProjects();
-  const navigation = useNavigation();
+export const ProjectsPageForSupervisor = () => {
+    const navigation = useNavigation();
+  const [user, setUser] = useState({});
+  const { isLoading, projects = [], fetch } = useFetchProjectsBySupervisorId();
+  const [userLoading, setUserLoading] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
-      fetch();
+      fetchUser();
     }, [navigation])
   );
+
+  const fetchUser = async () => {
+    setUserLoading(true);
+    const user = await useFetchUserFromLocalStorage();
+    if (user?._id) {
+      setUser(user);
+      fetch(user);
+    }
+    setUserLoading(false);
+  }
 
   const onPressProject = (item) => {
     navigation.navigate("projectDetail", item);
@@ -56,8 +70,8 @@ export const ProjectsPage = () => {
 
   return (
     <HomeContainer
-      isLoading={isLoading}
-      activeTab="Projects"
+      isLoading={isLoading || userLoading}
+      activeTab="ProjectsPageForSupervisor"
       heading={"Projects"}
     >
       <View style={{ flex: 1, width: "100%", marginTop: 20 }}>

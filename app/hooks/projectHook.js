@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { apiURL } from "../Utilities/client"
 import { client } from "../Utilities/client"
 import { ToastError, ToastSuccess } from "../Utilities/Toast"
@@ -80,7 +80,8 @@ export const useFetchUnapprovedProject = () => {
     const [projects, setProject] = useState([]);
     const [isLoading, setIsLoading] = useState(true)
 
-    useEffect(() => {
+    const fetchData = () => {
+        setIsLoading(true)
         client.get(`project/cordinator/requested/get`).then(({data}) => {
             console.log({projects: data.data})
             setProject(data.data)
@@ -88,16 +89,16 @@ export const useFetchUnapprovedProject = () => {
         }).catch(e => {
             ToastError(errorModifier(e))
         })
-    }, [])
+    }
 
-    return {projects, isLoading};
+    return {projects, isLoading, fetchData};
 }
 
 export const useFetchAllProjects = () => {
     const [projects, setProject] = useState([]);
     const [isLoading, setIsLoading] = useState(true)
 
-    useEffect(() => {
+    const fetch = () => {
         client.get(`project/get`).then(({data}) => {
             console.log({projects: data.data})
             setProject(data.data)
@@ -105,9 +106,27 @@ export const useFetchAllProjects = () => {
         }).catch(e => {
             ToastError(errorModifier(e))
         })
-    }, [])
+    }
 
-    return {projects, isLoading};
+    return {projects, isLoading, fetch};
+}
+
+export const useFetchProjectsBySupervisorId = () => {
+    const [projects, setProject] = useState([]);
+    const [isLoading, setIsLoading] = useState(true)
+
+    const fetch = (user) => {
+        console.log({userForSup:user})
+        client.get(`project/supervisor/get/${user?._id}`).then(({data}) => {
+            console.log({projectsBySup: data.data})
+            setProject(data.data)
+            setIsLoading(false)
+        }).catch(e => {
+            ToastError(errorModifier(e))
+        })
+    }
+
+    return {projects, isLoading, fetch};
 }
 
 export const useFetchAllProjectIdeas = (id, rand) => {

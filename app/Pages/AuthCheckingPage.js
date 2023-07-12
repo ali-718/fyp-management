@@ -20,7 +20,7 @@ export const AuthCheckingPage = () => {
           navigation.navigate('Projects')
           return
         }
-        navigation.navigate('Projects')
+        navigation.navigate('ProjectsPageForSupervisor')
         return
       }
       navigation.navigate('Login')

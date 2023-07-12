@@ -38,24 +38,34 @@ const _emptyComponent = () => (
 );
 
 export const ProjectsPageForCoordinator = () => {
-  const {isLoading, projects = []} = useFetchUnapprovedProject() 
   const navigation = useNavigation();
-
-
+  const {
+    isLoading,
+    projects = [],
+    fetchData,
+  } = useFetchUnapprovedProject();
   const onPressProject = (item) => {
     navigation.navigate("projectDetail", item);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [navigation])
+  );
+
   return (
-    <HomeContainer isLoading={isLoading} activeTab='ProjectsPageForCoordinator' heading={"Unapproved Projects"}>
+    <HomeContainer
+      isLoading={isLoading}
+      activeTab="ProjectsPageForCoordinator"
+      heading={"Unapproved Projects"}
+    >
       <View style={{ flex: 1, width: "100%", marginTop: 20 }}>
         <View style={{ width: "100%", flex: 1 }}>
           <FlatList
             key={(item, i) => `${i}`}
             data={projects}
-            renderItem={(item) =>
-              renderItem(item, onPressProject)
-            }
+            renderItem={(item) => renderItem(item, onPressProject)}
             style={{ flex: 1, width: "100%" }}
             contentContainerStyle={{ paddingBottom: 10 }}
             ListEmptyComponent={_emptyComponent}
