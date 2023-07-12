@@ -46,6 +46,7 @@ export const MyProjectPage = () => {
     description = "",
     title: name,
     projectMembers: students = [],
+    isApprovedByCoordinator = true
   } = project;
   const [isModal, setIsModal] = useState(false);
   const [meetingModal, setMeetingModal] = useState(false);
@@ -138,6 +139,8 @@ export const MyProjectPage = () => {
         <Heading mt="5" size="md">
           {name}
         </Heading>
+        {!isApprovedByCoordinator && <Text style={{color: primaryRedColor, fontSize: 12}}>Not Approved</Text>}
+      
         {description ? (
           <Text fontSize="xs" fontWeight="500" mt="1">
             {description}
