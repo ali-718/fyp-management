@@ -92,6 +92,11 @@ export const AddProjectsPage = () => {
       return;
     }
 
+    if (selectedStudents.length > 2) {
+      ToastError("There cannot be more than 3 members in group")
+      return;
+    }
+
     if (isEdit) {
       const data = JSON.parse(storedData);
       const Index = data?.findIndex((item) => item._id === paramsData?._id);
@@ -282,7 +287,7 @@ export const AddProjectsPage = () => {
                 }}
                 onPress={() => onSelectStudents(item)}
               >
-                <SupervisorCard name={item?.name} email={item?._id} noOptions />
+                <SupervisorCard name={item?.name} email={item?.email} noOptions />
               </TouchableOpacity>
             ))}
           </ScrollView>
